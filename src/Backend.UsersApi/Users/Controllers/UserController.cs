@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Users.Entities.Database;
+using Users.Helpers;
 using Users.Models;
 using Users.SQRS.Commands;
 using Users.SQRS.Queries;
@@ -13,9 +14,12 @@ public class UserController : Controller
 {
     private readonly IMediator _mediator;
 
-    public UserController(IMediator mediator)
+    private readonly JwtService _jwtService;
+    public UserController(IMediator mediator, JwtService jwtService)
     {
         _mediator = mediator;
+        
+        _jwtService = jwtService;
     }
 
 
@@ -32,7 +36,7 @@ public class UserController : Controller
             BirthDate = request.BirthDate,
             Address = request.Address
         };
-        
+
         try
         {
             var result = await _mediator.Send(command);
@@ -41,7 +45,7 @@ public class UserController : Controller
         }
         catch (Exception ex)
         {
-            return BadRequest(new { Message = ex.Message,});
+            return BadRequest(new { Message = ex.Message, });
         }
     }
 
@@ -56,13 +60,62 @@ public class UserController : Controller
 
         try
         {
+            var jwtToken = await _mediator.Send(command);
+
+            Response.Cookies.Append("jwt", jwtToken, new CookieOptions
+            {
+                HttpOnly = true
+            });
+            
+            return Ok(new
+            {
+                message = "Success"
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+    }
+
+    [HttpGet("me")]
+    public async Task<IActionResult> GetUser()
+    {
+        try
+        {
+            var jwt = Request.Cookies["jwt"];
+
+            var token = _jwtService.Verify(jwt);
+
+            var command = new GetUserByIdQuery();
+
+            if (!int.TryParse(token.Issuer, out int userId))
+            {
+                return BadRequest("Invalid data!");
+            }
+
+            command.Id = userId;
+
             var user = await _mediator.Send(command);
+
 
             return Ok(user);
         }
         catch (Exception ex)
         {
-            return BadRequest(new { Message = ex.Message});
+            return Unauthorized();
         }
     }
+
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Delete("jwt");
+
+        return Ok(new
+        {
+            message = "Success"
+        });
+    }
+    
 }

@@ -3,26 +3,30 @@ using System.Text;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Users.Entities.Database;
+using Users.Helpers;
 using Users.Interfaces;
 
 namespace Users.SQRS.Queries;
 
-public class LoginUserQuery : IRequest<User>
+public class LoginUserQuery : IRequest<string>
 {
     public string Username { get; set; }
     public string Password { get; set; }
 }
 
-public class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, User>
+public class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, string>
 {
     private readonly IUsersDbContext _db;
 
-    public LoginUserQueryHandler(IUsersDbContext db)
+    private readonly JwtService _jwtService;
+    
+    public LoginUserQueryHandler(IUsersDbContext db, JwtService jwtService)
     {
         _db = db;
+        _jwtService = jwtService;
     }
 
-    public async Task<User> Handle(LoginUserQuery request, CancellationToken cancellationToken)
+    public async Task<string> Handle(LoginUserQuery request, CancellationToken cancellationToken)
     {
         var existingUser = await _db.Users.Where(u => u.Username == request.Username)
             .AsNoTracking()
@@ -37,8 +41,10 @@ public class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, User>
         {
             throw new Exception($"Invalid username or password!");
         }
+
+        var jwt = _jwtService.Generate(existingUser.Id);
         
-        return existingUser;
+        return jwt;
     }
 
     private static bool CheckPassword(string requestPassword, User user)
