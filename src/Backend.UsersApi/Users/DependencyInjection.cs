@@ -19,7 +19,11 @@ public static class DependencyInjection
 
         services.AddScoped<IUsersDbContext>(provider =>
             provider.GetService<UsersDbContext>());
- 
+        
+        services.AddMediatR(configuration =>
+        {
+            configuration.RegisterServicesFromAssembly(typeof(Program).Assembly);
+        });
         
         return services;
     }
