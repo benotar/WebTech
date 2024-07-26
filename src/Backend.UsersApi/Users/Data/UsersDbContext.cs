@@ -21,7 +21,7 @@ public class UsersDbContext : DbContext, IUsersDbContext
         base.OnModelCreating(modelBuilder);
     }
 
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         return await base.SaveChangesAsync(cancellationToken);
     }

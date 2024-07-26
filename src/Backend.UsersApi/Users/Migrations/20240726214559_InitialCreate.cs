@@ -23,10 +23,8 @@ namespace Users.Migrations
                     password_hash = table.Column<byte[]>(type: "bytea", nullable: false),
                     first_name = table.Column<string>(type: "text", nullable: false),
                     last_name = table.Column<string>(type: "text", nullable: false),
-                    date_of_birth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    address = table.Column<string>(type: "text", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    date_of_birth = table.Column<DateTime>(type: "date", nullable: false),
+                    Address = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {

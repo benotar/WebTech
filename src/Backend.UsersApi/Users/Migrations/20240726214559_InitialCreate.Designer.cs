@@ -12,7 +12,7 @@ using Users.Data;
 namespace Users.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20240726110254_InitialCreate")]
+    [Migration("20240726214559_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -36,15 +36,10 @@ namespace Users.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("address");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("date")
                         .HasColumnName("date_of_birth");
 
                     b.Property<string>("FirstName")
@@ -66,10 +61,6 @@ namespace Users.Migrations
                         .IsRequired()
                         .HasColumnType("bytea")
                         .HasColumnName("password_salt");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
 
                     b.Property<string>("Username")
                         .IsRequired()

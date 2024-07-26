@@ -37,7 +37,7 @@ public class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, User>
         {
             throw new Exception($"Invalid username or password!");
         }
-
+        
         return existingUser;
     }
 
