@@ -9,7 +9,7 @@ using Users.SQRS.Queries;
 namespace Users.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class UserController : Controller
 {
     private readonly IMediator _mediator;
@@ -26,6 +26,22 @@ public class UserController : Controller
     [HttpPost("register")]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
     {
+        DateTime birthDate = default;
+
+        if (!string.IsNullOrWhiteSpace(request.BirthDate))
+        {
+            if (DateTime.TryParseExact(request.BirthDate, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None,
+                    out var parsedDate))
+            {
+                birthDate = parsedDate.AddHours(3);
+            }
+            else
+            {
+                return BadRequest(new { Message = "Invalid birth date format. Expected format is yyyy-MM-dd." });
+            }
+        }
+        
+        
         var command = new CreateUserCommand
         {
             Username = request.Username,
@@ -33,7 +49,7 @@ public class UserController : Controller
             ConfirmPassword = request.ConfirmPassword,
             FirstName = request.FirstName,
             LastName = request.LastName,
-            BirthDate = request.BirthDate,
+            BirthDate = birthDate,
             Address = request.Address
         };
 

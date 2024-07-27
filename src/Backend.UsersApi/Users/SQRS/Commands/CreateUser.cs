@@ -4,7 +4,6 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Users.Entities.Database;
 using Users.Interfaces;
-using s = System.String;
 
 namespace Users.SQRS.Commands;
 
@@ -38,13 +37,13 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, bool>
         {
             throw new Exception($"User \'{request.Username}\' already exists!");
         }
-
+        
         var newUser = new User
         {
             Username = request.Username,
             FirstName = request.FirstName,
             LastName = request.LastName,
-            DateOfBirth = request.BirthDate.AddHours(3),
+            DateOfBirth = request.BirthDate,
             Address = request.Address
         };
 
