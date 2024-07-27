@@ -9,6 +9,7 @@ public class Author
     public string LastName { get; set; }
     public DateTime DateOfBirth { get; set; }
     
-    //[JsonIgnore] 
+    //[JsonIgnore]
+    [JsonPropertyName("books")]
     public ICollection<Book> Books = new List<Book>();
 }

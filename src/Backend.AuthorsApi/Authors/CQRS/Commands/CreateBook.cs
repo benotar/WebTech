@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Authors.CQRS.Commands;
 
-public class CreateBookCommand : IRequest<bool>
+public class CreateBookCommand : IRequest<(string message, bool isCreated)>
 {
     public string Name { get; set; }
 
@@ -16,7 +16,7 @@ public class CreateBookCommand : IRequest<bool>
     public int AuthorId { get; set; }
 }
 
-public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, bool>
+public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, (string message, bool isCreated)>
 {
     private readonly IAuthorsDbContext _db;
 
@@ -26,7 +26,7 @@ public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, bool>
     }
 
 
-    public async Task<bool> Handle(CreateBookCommand request, CancellationToken cancellationToken)
+    public async Task<(string message, bool isCreated)> Handle(CreateBookCommand request, CancellationToken cancellationToken)
     {
         var existingAuthor = await _db.Authors
             .Where(a => a.Id == request.AuthorId)
@@ -34,7 +34,7 @@ public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, bool>
 
         if (existingAuthor is null)
         {
-            throw new Exception($"Author with ID {request.AuthorId} not found.");
+            return ($"Author with ID {request.AuthorId} not found.", false);
         }
 
         var existingBook = await _db.Books
@@ -43,7 +43,9 @@ public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, bool>
         
         if (existingBook)
         {
-            throw new Exception($"Book '{request.Name}' by Author: {existingAuthor.LastName} {existingAuthor.FirstName} already exists.");
+            return (
+                $"Book '{request.Name}' by Author: {existingAuthor.LastName} {existingAuthor.FirstName} already exists.",
+                false);
         }
 
         var newBook = new Book
@@ -58,6 +60,6 @@ public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, bool>
 
         await _db.SaveChangesAsync(cancellationToken);
 
-        return true;
+        return ($"The book '{request.Name}' by Author: {existingAuthor.LastName} {existingAuthor.FirstName} has been successfully created!", true);
     }
 }

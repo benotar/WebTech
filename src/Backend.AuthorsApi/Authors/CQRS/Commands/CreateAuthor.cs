@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Authors.CQRS.Commands;
 
-public class CreateAuthorCommand : IRequest<Author>
+public class CreateAuthorCommand : IRequest<(string message, bool isCreated)>
 {
     public string FirstName { get; set; }
     
@@ -14,7 +14,7 @@ public class CreateAuthorCommand : IRequest<Author>
     public DateTime DateOfBirth { get; set; }
 }
 
-public class CreateAuthorCommandHandler : IRequestHandler<CreateAuthorCommand, Author>
+public class CreateAuthorCommandHandler : IRequestHandler<CreateAuthorCommand, (string message, bool isCreated)>
 {
     private readonly IAuthorsDbContext _db;
 
@@ -23,7 +23,7 @@ public class CreateAuthorCommandHandler : IRequestHandler<CreateAuthorCommand, A
         _db = db;
     }
 
-    public async Task<Author> Handle(CreateAuthorCommand request, CancellationToken cancellationToken)
+    public async Task<(string message, bool isCreated)> Handle(CreateAuthorCommand request, CancellationToken cancellationToken)
     {
         var existingAuthor = await _db.Authors
             .AnyAsync(a => a.FirstName == request.FirstName && a.LastName == request.LastName,
@@ -31,7 +31,7 @@ public class CreateAuthorCommandHandler : IRequestHandler<CreateAuthorCommand, A
         
         if (existingAuthor)
         {
-            throw new Exception($"Author \'{request.FirstName} {request.LastName}\' already exists!");
+            return ($"Author \'{request.FirstName} {request.LastName}\' already exists!", false);
         }
 
         var newAuthor = new Author
@@ -45,6 +45,6 @@ public class CreateAuthorCommandHandler : IRequestHandler<CreateAuthorCommand, A
 
         await _db.SaveChangesAsync(cancellationToken);
 
-        return newAuthor;
+        return ($"The author \'{request.FirstName} {request.LastName}\' has been successfully created!",true);
     }
 }

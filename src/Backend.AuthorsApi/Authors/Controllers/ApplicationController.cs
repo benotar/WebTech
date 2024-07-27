@@ -18,16 +18,15 @@ public class ApplicationController : Controller
         _mediator = mediator;
     }
 
-    [HttpPost("create")]
-    public async Task<IActionResult> Create([FromBody] CreateRequest request)
+    [HttpPost("create-author")]
+    public async Task<IActionResult> Create([FromBody] CreateAuthorRequest request)
     {
         DateTime authorBirthDate = default;
 
-        if (!string.IsNullOrWhiteSpace(request.AuthorDateOfBirth))
+        if (!string.IsNullOrWhiteSpace(request.DateOfBirth))
         {
-            if (DateTime.TryParseExact(request.AuthorDateOfBirth, "yyyy-MM-dd", null,
-                    System.Globalization.DateTimeStyles.None,
-                    out var parsedDate))
+            if (DateTime.TryParseExact(request.DateOfBirth, "yyyy-MM-dd", null,
+                    System.Globalization.DateTimeStyles.None, out var parsedDate))
             {
                 authorBirthDate = parsedDate.AddHours(3);
             }
@@ -39,60 +38,52 @@ public class ApplicationController : Controller
 
         var authorCommand = new CreateAuthorCommand
         {
-            FirstName = request.AuthorFirstName,
-            LastName = request.AuthorLastName,
+            FirstName = request.FirstName,
+            LastName = request.LastName,
             DateOfBirth = authorBirthDate
         };
 
-        try
-        {
-            var author = await _mediator.Send(authorCommand);
+        var result = await _mediator.Send(authorCommand);
 
-            var bookCommand = new CreateBookCommand
-            {
-                Name = request.BookName,
-                PublicAt = request.BookPublicAt,
-                Genre = request.BookGenre,
-                AuthorId = author.Id
-            };
-
-            if (!await _mediator.Send(bookCommand))
-            {
-                return BadRequest(new
-                {
-                    message = "Failed to create book!"
-                });
-            }
-
-            return Ok(new
-            {
-                message = "Success"
-            });
-        }
-        catch (Exception ex)
+        if (!result.isCreated)
         {
             return BadRequest(new
             {
-                message = ex.Message
+                message = result.message
             });
         }
+
+        return Ok(new
+        {
+            message = result.message
+        });
     }
 
-    [HttpGet("get")]
-    [ProducesResponseType(typeof(List<Author>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<List<Author>>> Get()
-    {
-        var result = await _mediator.Send(new GetAuthorsBooksQuery());
 
-        if (result is null)
+    [HttpPost("create-book")]
+    public async Task<IActionResult> Create([FromBody] CreateBookRequest request)
+    {
+        var bookCommand = new CreateBookCommand
+        {
+            Name = request.Name,
+            PublicAt = request.PublicAt,
+            Genre = request.Genre,
+            AuthorId = request.AuthorId
+        };
+
+        var result = await _mediator.Send(bookCommand);
+
+        if (!result.isCreated)
         {
             return BadRequest(new
             {
-                message = "Failed to get authors!"
+                message = result.message
             });
         }
 
-        return Ok(result);
+        return Ok(new
+        {
+            message = result.message
+        });
     }
 }
