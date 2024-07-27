@@ -14,8 +14,7 @@ public class BookTypeConfigurations : IEntityTypeConfiguration<Book>
         
         builder.Property(a => a.Id).HasColumnName("id");
         builder.Property(a => a.Name).HasColumnName("name");
-        builder.Property(a => a.PublicAt).HasColumnName("public_at")
-            .HasColumnType("date");
+        builder.Property(a => a.PublicAt).HasColumnName("public_at");
         builder.Property(a => a.Genre).HasColumnName("genre");
     }
 }

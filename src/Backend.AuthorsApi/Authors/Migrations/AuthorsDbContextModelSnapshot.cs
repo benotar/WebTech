@@ -72,8 +72,8 @@ namespace Authors.Migrations
                         .HasColumnType("text")
                         .HasColumnName("name");
 
-                    b.Property<DateTime>("PublicAt")
-                        .HasColumnType("date")
+                    b.Property<int>("PublicAt")
+                        .HasColumnType("integer")
                         .HasColumnName("public_at");
 
                     b.HasKey("Id");

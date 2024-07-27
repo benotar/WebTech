@@ -34,7 +34,7 @@ namespace Authors.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "text", nullable: false),
-                    public_at = table.Column<DateTime>(type: "date", nullable: false),
+                    public_at = table.Column<int>(type: "integer", nullable: false),
                     genre = table.Column<string>(type: "text", nullable: false),
                     AuthorId = table.Column<int>(type: "integer", nullable: false)
                 },

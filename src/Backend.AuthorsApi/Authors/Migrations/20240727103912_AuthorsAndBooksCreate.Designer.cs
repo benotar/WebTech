@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Authors.Migrations
 {
     [DbContext(typeof(AuthorsDbContext))]
-    [Migration("20240727095236_AuthorsAndBooksCreate")]
+    [Migration("20240727103912_AuthorsAndBooksCreate")]
     partial class AuthorsAndBooksCreate
     {
         /// <inheritdoc />
@@ -75,8 +75,8 @@ namespace Authors.Migrations
                         .HasColumnType("text")
                         .HasColumnName("name");
 
-                    b.Property<DateTime>("PublicAt")
-                        .HasColumnType("date")
+                    b.Property<int>("PublicAt")
+                        .HasColumnType("integer")
                         .HasColumnName("public_at");
 
                     b.HasKey("Id");
