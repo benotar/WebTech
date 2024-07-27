@@ -98,10 +98,7 @@ public class UserController : Controller
     {
         Response.Cookies.Delete("jwt");
 
-        return Ok(new
-        {
-            message = "Success"
-        });
+        return Ok("Successful logout!");
     }
     
     [HttpGet("me")]
@@ -140,7 +137,7 @@ public class UserController : Controller
                 user
             });
         }
-        catch (Exception ex)
+        catch (Exception _)
         {
             return Unauthorized();
         }
