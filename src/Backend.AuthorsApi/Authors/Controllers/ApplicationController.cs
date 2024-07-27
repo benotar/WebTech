@@ -24,6 +24,7 @@ public class ApplicationController : Controller
     }
 
     [HttpPost("login")]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
     public IActionResult Login()
     {
         try
@@ -47,6 +48,7 @@ public class ApplicationController : Controller
     }
 
     [HttpPost("logout")]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
     public IActionResult Logout()
     {
         Response.Cookies.Delete("jwt");
@@ -55,6 +57,9 @@ public class ApplicationController : Controller
     }
 
     [HttpPost("create-author")]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Create([FromBody] CreateAuthorRequest request)
     {
         try
@@ -103,6 +108,9 @@ public class ApplicationController : Controller
 
 
     [HttpPost("create-book")]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Create([FromBody] CreateBookRequest request)
     {
         try
@@ -135,6 +143,9 @@ public class ApplicationController : Controller
     }
 
     [HttpGet("get-authors")]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ICollection<Author>>> GetAuthors()
     {
         try
@@ -159,6 +170,9 @@ public class ApplicationController : Controller
     }
 
     [HttpGet("get-books")]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ICollection<Author>>> GetBooks()
     {
         try
@@ -183,6 +197,9 @@ public class ApplicationController : Controller
     }
 
     [HttpPut("update-author")]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> UpdateAuthor([FromBody] UpdateAuthorRequest request)
     {
         try
@@ -228,8 +245,11 @@ public class ApplicationController : Controller
             return Unauthorized();
         }
     }
-    
+
     [HttpPut("update-book")]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> UpdateBook([FromBody] UpdateBookRequest request)
     {
         try
@@ -237,6 +257,7 @@ public class ApplicationController : Controller
             var jwt = Request.Cookies["jwt"];
 
             var token = _jwtService.Verify(jwt);
+
             var command = new UpdateBookCommand
             {
                 BookId = request.BookId,
@@ -247,6 +268,60 @@ public class ApplicationController : Controller
             };
 
             var result = await _mediator.Send(command);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result.Message);
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized();
+        }
+    }
+
+    [HttpDelete("delete-author/{authorId:int}")]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> DeleteAuthor(int authorId)
+    {
+        try
+        {
+            var jwt = Request.Cookies["jwt"];
+
+            var token = _jwtService.Verify(jwt);
+
+            var result = await _mediator.Send(new DeleteAuthorCommand { AuthorId = authorId });
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result.Message);
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized();
+        }
+    }
+
+    [HttpDelete("delete-book/{bookId:int}")]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> DeleteBook(int bookId)
+    {
+        try
+        {
+            var jwt = Request.Cookies["jwt"];
+
+            var token = _jwtService.Verify(jwt);
+
+            var result = await _mediator.Send(new DeleteBookCommand { BookId = bookId });
 
             if (!result.IsSuccess)
             {

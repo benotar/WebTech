@@ -26,7 +26,7 @@ public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, Creat
     {
         _db = db;
     }
-
+    
     public async Task<CreateBookCommandResult> Handle(CreateBookCommand request, CancellationToken cancellationToken)
     {
         var existingAuthor = await _db.Authors

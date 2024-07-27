@@ -1,6 +1,5 @@
 ﻿using Authors.Entities.Database;
 using Authors.Interfaces;
-using Authors.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,12 +20,12 @@ public class GetAuthorsQueryHandler : IRequestHandler<GetAuthorsQuery, GetAuthor
     public async Task<GetAuthorsQueryResult> Handle(
         GetAuthorsQuery request, CancellationToken cancellationToken)
     {
-        var authors = await _db.Authors
+        var existingAuthor = await _db.Authors
             .AsNoTracking()
             .ToListAsync(cancellationToken);
 
-        return authors is null
+        return existingAuthor is null
             ? new GetAuthorsQueryResult(null, "An error occurred while retrieving the list of authors!", false)
-            : new GetAuthorsQueryResult(authors, "Success", true);
+            : new GetAuthorsQueryResult(existingAuthor, "Success", true);
     }
 }

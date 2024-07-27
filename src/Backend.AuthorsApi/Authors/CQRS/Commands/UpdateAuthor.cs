@@ -1,5 +1,4 @@
-﻿using Authors.Entities.Database;
-using Authors.Interfaces;
+﻿using Authors.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
