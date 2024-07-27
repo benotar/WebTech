@@ -1,5 +1,6 @@
 ﻿using Authors.Models;
 using Authors.SQRS.Commands;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Authors.Controllers;
@@ -8,14 +9,21 @@ namespace Authors.Controllers;
 [Route("Authors")]
 public class ApplicationController : Controller
 {
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateAuthorRequest authorRequest, [FromBody] CreateBookRequest bookRequest)
+    private readonly IMediator _mediator;
+
+    public ApplicationController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    [HttpPost("create")]
+    public async Task<IActionResult> Create([FromBody] CreateRequest request)
     {
         DateTime authorBirthDate = default;
 
-        if (!string.IsNullOrWhiteSpace(authorRequest.DateOfBirth))
+        if (!string.IsNullOrWhiteSpace(request.AuthorDateOfBirth))
         {
-            if (DateTime.TryParseExact(authorRequest.DateOfBirth, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None,
+            if (DateTime.TryParseExact(request.AuthorDateOfBirth, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None,
                     out var parsedDate))
             {
                 authorBirthDate = parsedDate.AddHours(3);
@@ -28,12 +36,42 @@ public class ApplicationController : Controller
 
         var authorCommand = new CreateAuthorCommand
         {
-            FirstName = authorRequest.FirstName,
-            LastName = authorRequest.LastName,
+            FirstName = request.AuthorFirstName,
+            LastName = request.AuthorLastName,
             DateOfBirth = authorBirthDate
         };
-        
-        /////
-        return Ok();
+
+        try
+        {
+            var author = await _mediator.Send(authorCommand);
+
+            var bookCommand = new CreateBookCommand
+            {
+                Name = request.BookName,
+                PublicAt = request.BookPublicAt,
+                Genre = request.BookGenre,
+                AuthorId = author.Id
+            };
+
+            if (!await _mediator.Send(bookCommand))
+            {
+                return BadRequest(new
+                {
+                    message = "Failed to create book!"
+                });
+            }
+
+            return Ok(new
+            {
+                message = "Success"
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
+                message = ex.Message
+            });
+        }
     }
 }

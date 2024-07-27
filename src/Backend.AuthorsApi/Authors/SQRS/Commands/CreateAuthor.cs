@@ -1,9 +1,11 @@
-﻿using Authors.Interfaces;
+﻿using Authors.Entities.Database;
+using Authors.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Authors.SQRS.Commands;
 
-public class CreateAuthorCommand : IRequest<bool>
+public class CreateAuthorCommand : IRequest<Author>
 {
     public string FirstName { get; set; }
     
@@ -12,7 +14,7 @@ public class CreateAuthorCommand : IRequest<bool>
     public DateTime DateOfBirth { get; set; }
 }
 
-public class CreateAuthorCommandHandler : IRequestHandler<CreateAuthorCommand, bool>
+public class CreateAuthorCommandHandler : IRequestHandler<CreateAuthorCommand, Author>
 {
     private readonly IAuthorsDbContext _db;
 
@@ -21,8 +23,28 @@ public class CreateAuthorCommandHandler : IRequestHandler<CreateAuthorCommand, b
         _db = db;
     }
 
-    public async Task<bool> Handle(CreateAuthorCommand request, CancellationToken cancellationToken)
+    public async Task<Author> Handle(CreateAuthorCommand request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var existingAuthor = await _db.Authors
+            .AnyAsync(a => a.FirstName == request.FirstName && a.LastName == request.LastName,
+                cancellationToken);
+        
+        if (existingAuthor)
+        {
+            throw new Exception($"Author \'{request.FirstName} {request.LastName}\' already exists!");
+        }
+
+        var newAuthor = new Author
+        {
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            DateOfBirth = request.DateOfBirth
+        };
+
+        _db.Authors.Add(newAuthor);
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        return newAuthor;
     }
 }
