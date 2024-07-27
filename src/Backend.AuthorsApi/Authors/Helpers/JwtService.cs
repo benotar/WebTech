@@ -8,7 +8,7 @@ public class JwtService
 {
     private const string SecureKey = "UsersAuthKey---11111111111111111111-WHO-READ-WINS-11111111111111111111111111";
 
-    public string Generate(int id)
+    public string Generate()
     {
         var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecureKey));
 
@@ -16,7 +16,7 @@ public class JwtService
 
         var header = new JwtHeader(credentials);
 
-        var payload = new JwtPayload(id.ToString(), null, null, null, DateTime.Today.AddDays(1));
+        var payload = new JwtPayload(null, null, null, null, DateTime.Today.AddDays(1));
 
         var securityToken = new JwtSecurityToken(header, payload);
 

@@ -10,6 +10,5 @@ public class Author
     public DateTime DateOfBirth { get; set; }
     
     //[JsonIgnore]
-    [JsonPropertyName("books")]
     public ICollection<Book> Books = new List<Book>();
 }

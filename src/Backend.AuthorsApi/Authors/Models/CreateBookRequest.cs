@@ -10,7 +10,7 @@ public class CreateBookRequest
     
     [Required(ErrorMessage = "Book publication date is required!")]
     [DataType(DataType.Date)]
-    [RegularExpression(@"^\d{4}$", ErrorMessage = "Invalid birth date format. Expected format is yyyy.")]
+    [RegularExpression(@"^\d{4}$", ErrorMessage = "Invalid publication date format. Expected format is yyyy.")]
     public int PublicAt { get; set; }
     
     [Required(ErrorMessage = "Book genre is required!")]
