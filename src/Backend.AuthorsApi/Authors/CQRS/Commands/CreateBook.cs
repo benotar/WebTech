@@ -5,28 +5,29 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Authors.CQRS.Commands;
 
-public class CreateBookCommand : IRequest<(string message, bool isCreated)>
+public record CreateBookCommandResult(string Message, bool IsCreated);
+
+public class CreateBookCommand()
+    : IRequest<CreateBookCommandResult>
 {
     public string Name { get; set; }
-
+    
     public int PublicAt { get; set; }
-
+    
     public string Genre { get; set; }
-
+    
     public int AuthorId { get; set; }
 }
 
-public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, (string message, bool isCreated)>
+public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, CreateBookCommandResult>
 {
     private readonly IAuthorsDbContext _db;
-
     public CreateBookCommandHandler(IAuthorsDbContext db)
     {
         _db = db;
     }
 
-
-    public async Task<(string message, bool isCreated)> Handle(CreateBookCommand request, CancellationToken cancellationToken)
+    public async Task<CreateBookCommandResult> Handle(CreateBookCommand request, CancellationToken cancellationToken)
     {
         var existingAuthor = await _db.Authors
             .Where(a => a.Id == request.AuthorId)
@@ -34,16 +35,16 @@ public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, (stri
 
         if (existingAuthor is null)
         {
-            return ($"Author with ID {request.AuthorId} not found.", false);
+            return new CreateBookCommandResult($"Author with ID {request.AuthorId} not found.", false);
         }
 
         var existingBook = await _db.Books
             .AnyAsync(b => b.Name == request.Name && b.PublicAt == request.PublicAt && b.Genre == request.Genre
                            && b.AuthorId == request.AuthorId, cancellationToken);
-        
+
         if (existingBook)
         {
-            return (
+            return new CreateBookCommandResult(
                 $"Book '{request.Name}' by Author: {existingAuthor.LastName} {existingAuthor.FirstName} already exists.",
                 false);
         }
@@ -60,6 +61,8 @@ public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, (stri
 
         await _db.SaveChangesAsync(cancellationToken);
 
-        return ($"The book '{request.Name}' by Author: {existingAuthor.LastName} {existingAuthor.FirstName} has been successfully created!", true);
+        return new CreateBookCommandResult(
+            $"The book '{request.Name}' by Author: {existingAuthor.LastName} {existingAuthor.FirstName} has been successfully created!",
+            true);
     }
 }

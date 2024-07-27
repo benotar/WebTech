@@ -2,7 +2,7 @@
 using Authors.Models;
 using Authors.CQRS.Commands;
 using Authors.Helpers;
-using Authors.SQRS.Queries;
+using Authors.CQRS.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,7 +42,7 @@ public class ApplicationController : Controller
         }
         catch (Exception ex)
         {
-            return BadRequest(new { Message = ex.Message });
+            return BadRequest(ex.Message);
         }
     }
 
@@ -51,10 +51,7 @@ public class ApplicationController : Controller
     {
         Response.Cookies.Delete("jwt");
 
-        return Ok(new
-        {
-            message = "Success"
-        });
+        return Ok("Success");
     }
 
     [HttpPost("create-author")]
@@ -65,7 +62,7 @@ public class ApplicationController : Controller
             var jwt = Request.Cookies["jwt"];
 
             var token = _jwtService.Verify(jwt);
-            
+
             DateTime authorBirthDate = default;
 
             if (!string.IsNullOrWhiteSpace(request.DateOfBirth))
@@ -91,18 +88,12 @@ public class ApplicationController : Controller
 
             var result = await _mediator.Send(authorCommand);
 
-            if (!result.isCreated)
+            if (!result.IsCreated)
             {
-                return BadRequest(new
-                {
-                    message = result.message
-                });
+                return BadRequest(result.Message);
             }
 
-            return Ok(new
-            {
-                message = result.message
-            });
+            return Ok(result.Message);
         }
         catch (Exception ex)
         {
@@ -119,7 +110,7 @@ public class ApplicationController : Controller
             var jwt = Request.Cookies["jwt"];
 
             var token = _jwtService.Verify(jwt);
-            
+
             var bookCommand = new CreateBookCommand
             {
                 Name = request.Name,
@@ -130,18 +121,12 @@ public class ApplicationController : Controller
 
             var result = await _mediator.Send(bookCommand);
 
-            if (!result.isCreated)
+            if (!result.IsCreated)
             {
-                return BadRequest(new
-                {
-                    message = result.message
-                });
+                return BadRequest(result.Message);
             }
 
-            return Ok(new
-            {
-                message = result.message
-            });
+            return Ok(result.Message);
         }
         catch (Exception ex)
         {
@@ -158,14 +143,117 @@ public class ApplicationController : Controller
 
             var token = _jwtService.Verify(jwt);
 
-            var result = await _mediator.Send(new GetAuthorsBooksQuery());
+            var result = await _mediator.Send(new GetAuthorsQuery());
 
-            if (!result.Item2.isSuccess)
+            if (!result.IsSuccess)
             {
-                return BadRequest(result.Item2.message);
+                return BadRequest(result.Message);
             }
 
-            return Ok(result.authors);
+            return Ok(result.Authors);
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized();
+        }
+    }
+
+    [HttpGet("get-books")]
+    public async Task<ActionResult<ICollection<Author>>> GetBooks()
+    {
+        try
+        {
+            var jwt = Request.Cookies["jwt"];
+
+            var token = _jwtService.Verify(jwt);
+
+            var result = await _mediator.Send(new GetBooksQuery());
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result.Authors);
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized();
+        }
+    }
+
+    [HttpPut("update-author")]
+    public async Task<IActionResult> UpdateAuthor([FromBody] UpdateAuthorRequest request)
+    {
+        try
+        {
+            var jwt = Request.Cookies["jwt"];
+
+            var token = _jwtService.Verify(jwt);
+
+            DateTime authorBirthDate = default;
+
+            if (!string.IsNullOrWhiteSpace(request.DateOfBirth))
+            {
+                if (DateTime.TryParseExact(request.DateOfBirth, "yyyy-MM-dd", null,
+                        System.Globalization.DateTimeStyles.None, out var parsedDate))
+                {
+                    authorBirthDate = parsedDate.AddHours(3);
+                }
+                else
+                {
+                    return BadRequest("Invalid author birth date format. Expected format is yyyy-MM-dd.");
+                }
+            }
+
+            var command = new UpdateAuthorCommand
+            {
+                AuthorId = request.AuthorId,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                DateOfBirth = authorBirthDate
+            };
+
+            var result = await _mediator.Send(command);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result.Message);
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized();
+        }
+    }
+    
+    [HttpPut("update-book")]
+    public async Task<IActionResult> UpdateBook([FromBody] UpdateBookRequest request)
+    {
+        try
+        {
+            var jwt = Request.Cookies["jwt"];
+
+            var token = _jwtService.Verify(jwt);
+            var command = new UpdateBookCommand
+            {
+                BookId = request.BookId,
+                Name = request.Name,
+                PublicAt = request.PublicAt,
+                Genre = request.Genre,
+                AuthorId = request.AuthorId
+            };
+
+            var result = await _mediator.Send(command);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result.Message);
         }
         catch (Exception ex)
         {

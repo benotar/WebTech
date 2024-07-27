@@ -5,7 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Authors.CQRS.Commands;
 
-public class CreateAuthorCommand : IRequest<(string message, bool isCreated)>
+public record CreateAuthorCommandResult(string Message, bool IsCreated);
+
+public class CreateAuthorCommand
+    : IRequest<CreateAuthorCommandResult>
 {
     public string FirstName { get; set; }
     
@@ -14,7 +17,7 @@ public class CreateAuthorCommand : IRequest<(string message, bool isCreated)>
     public DateTime DateOfBirth { get; set; }
 }
 
-public class CreateAuthorCommandHandler : IRequestHandler<CreateAuthorCommand, (string message, bool isCreated)>
+public class CreateAuthorCommandHandler : IRequestHandler<CreateAuthorCommand, CreateAuthorCommandResult>
 {
     private readonly IAuthorsDbContext _db;
 
@@ -23,15 +26,17 @@ public class CreateAuthorCommandHandler : IRequestHandler<CreateAuthorCommand, (
         _db = db;
     }
 
-    public async Task<(string message, bool isCreated)> Handle(CreateAuthorCommand request, CancellationToken cancellationToken)
+    public async Task<CreateAuthorCommandResult> Handle(CreateAuthorCommand request,
+        CancellationToken cancellationToken)
     {
         var existingAuthor = await _db.Authors
             .AnyAsync(a => a.FirstName == request.FirstName && a.LastName == request.LastName,
                 cancellationToken);
-        
+
         if (existingAuthor)
         {
-            return ($"Author \'{request.FirstName} {request.LastName}\' already exists!", false);
+            return new CreateAuthorCommandResult($"Author \'{request.FirstName} {request.LastName}\' already exists!",
+                false);
         }
 
         var newAuthor = new Author
@@ -45,6 +50,7 @@ public class CreateAuthorCommandHandler : IRequestHandler<CreateAuthorCommand, (
 
         await _db.SaveChangesAsync(cancellationToken);
 
-        return ($"The author \'{request.FirstName} {request.LastName}\' has been successfully created!",true);
+        return new CreateAuthorCommandResult(
+            $"The author \'{request.FirstName} {request.LastName}\' has been successfully created!", true);
     }
 }
