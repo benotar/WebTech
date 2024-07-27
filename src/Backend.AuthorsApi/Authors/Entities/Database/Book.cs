@@ -11,5 +11,6 @@ public class Book
     
     
     public int AuthorId { get; set; }
-    [JsonIgnore] public Author Author { get; set; }
+   // [JsonIgnore] 
+    public Author Author { get; set; }
 }

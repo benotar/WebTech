@@ -1,5 +1,7 @@
-﻿using Authors.Models;
+﻿using Authors.Entities.Database;
+using Authors.Models;
 using Authors.SQRS.Commands;
+using Authors.SQRS.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +25,8 @@ public class ApplicationController : Controller
 
         if (!string.IsNullOrWhiteSpace(request.AuthorDateOfBirth))
         {
-            if (DateTime.TryParseExact(request.AuthorDateOfBirth, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None,
+            if (DateTime.TryParseExact(request.AuthorDateOfBirth, "yyyy-MM-dd", null,
+                    System.Globalization.DateTimeStyles.None,
                     out var parsedDate))
             {
                 authorBirthDate = parsedDate.AddHours(3);
@@ -73,5 +76,23 @@ public class ApplicationController : Controller
                 message = ex.Message
             });
         }
+    }
+
+    [HttpGet("get")]
+    [ProducesResponseType(typeof(List<Author>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<List<Author>>> Get()
+    {
+        var result = await _mediator.Send(new GetAuthorsBooksQuery());
+
+        if (result is null)
+        {
+            return BadRequest(new
+            {
+                message = "Failed to get authors!"
+            });
+        }
+
+        return Ok(result);
     }
 }
