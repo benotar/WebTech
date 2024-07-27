@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Users.Entities.Database;
 using Users.Interfaces;
 
-namespace Users.SQRS.Commands;
+namespace Users.CQRS.Commands;
 
 public class CreateUserCommand : IRequest<bool>
 {

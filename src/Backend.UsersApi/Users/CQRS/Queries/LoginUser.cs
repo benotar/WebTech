@@ -6,7 +6,7 @@ using Users.Entities.Database;
 using Users.Helpers;
 using Users.Interfaces;
 
-namespace Users.SQRS.Queries;
+namespace Users.CQRS.Queries;
 
 public class LoginUserQuery : IRequest<string>
 {

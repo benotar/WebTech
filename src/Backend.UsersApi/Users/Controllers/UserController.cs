@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Users.Entities.Database;
 using Users.Helpers;
 using Users.Models;
-using Users.SQRS.Commands;
-using Users.SQRS.Queries;
+using Users.CQRS.Commands;
+using Users.CQRS.Queries;
 
 namespace Users.Controllers;
 

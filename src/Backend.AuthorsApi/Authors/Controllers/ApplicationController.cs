@@ -1,6 +1,6 @@
 ﻿using Authors.Entities.Database;
 using Authors.Models;
-using Authors.SQRS.Commands;
+using Authors.CQRS.Commands;
 using Authors.SQRS.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

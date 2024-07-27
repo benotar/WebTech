@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Users.Entities.Database;
 using Users.Interfaces;
 
-namespace Users.SQRS.Queries;
+namespace Users.CQRS.Queries;
 
 public class GetUserByIdQuery : IRequest<User>
 {

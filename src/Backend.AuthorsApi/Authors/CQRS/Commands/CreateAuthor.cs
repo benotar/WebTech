@@ -3,7 +3,7 @@ using Authors.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Authors.SQRS.Commands;
+namespace Authors.CQRS.Commands;
 
 public class CreateAuthorCommand : IRequest<Author>
 {
