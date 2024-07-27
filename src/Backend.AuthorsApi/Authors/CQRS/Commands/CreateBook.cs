@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Authors.CQRS.Commands;
 
-public record CreateBookCommandResult(string Message, bool IsCreated);
+public record CreateBookCommandResult(string Message, bool IsSuccess);
 
 public class CreateBookCommand()
     : IRequest<CreateBookCommandResult>

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Authors.CQRS.Commands;
 
-public record CreateAuthorCommandResult(string Message, bool IsCreated);
+public record CreateAuthorCommandResult(string Message, bool IsSuccess);
 
 public class CreateAuthorCommand
     : IRequest<CreateAuthorCommandResult>

@@ -36,14 +36,11 @@ public class ApplicationController : Controller
                 HttpOnly = true
             });
 
-            return Ok(new
-            {
-                message = "Success"
-            });
+            return Ok("Successful login!");
         }
-        catch (Exception ex)
+        catch (Exception _)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(_.Message);
         }
     }
 
@@ -53,7 +50,7 @@ public class ApplicationController : Controller
     {
         Response.Cookies.Delete("jwt");
 
-        return Ok("Success");
+        return Ok("Successful logout!");
     }
 
     [HttpPost("create-author")]
@@ -93,20 +90,19 @@ public class ApplicationController : Controller
 
             var result = await _mediator.Send(authorCommand);
 
-            if (!result.IsCreated)
+            if (!result.IsSuccess)
             {
                 return BadRequest(result.Message);
             }
 
             return Ok(result.Message);
         }
-        catch (Exception ex)
+        catch (Exception _)
         {
             return Unauthorized();
         }
     }
-
-
+    
     [HttpPost("create-book")]
     [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(IActionResult), StatusCodes.Status400BadRequest)]
@@ -129,14 +125,14 @@ public class ApplicationController : Controller
 
             var result = await _mediator.Send(bookCommand);
 
-            if (!result.IsCreated)
+            if (!result.IsSuccess)
             {
                 return BadRequest(result.Message);
             }
 
             return Ok(result.Message);
         }
-        catch (Exception ex)
+        catch (Exception _)
         {
             return Unauthorized();
         }
@@ -163,7 +159,7 @@ public class ApplicationController : Controller
 
             return Ok(result.Authors);
         }
-        catch (Exception ex)
+        catch (Exception _)
         {
             return Unauthorized();
         }
@@ -190,7 +186,7 @@ public class ApplicationController : Controller
 
             return Ok(result.Authors);
         }
-        catch (Exception ex)
+        catch (Exception _)
         {
             return Unauthorized();
         }
@@ -240,7 +236,7 @@ public class ApplicationController : Controller
 
             return Ok(result.Message);
         }
-        catch (Exception ex)
+        catch (Exception _)
         {
             return Unauthorized();
         }
@@ -276,7 +272,7 @@ public class ApplicationController : Controller
 
             return Ok(result.Message);
         }
-        catch (Exception ex)
+        catch (Exception _)
         {
             return Unauthorized();
         }
@@ -303,7 +299,7 @@ public class ApplicationController : Controller
 
             return Ok(result.Message);
         }
-        catch (Exception ex)
+        catch (Exception _)
         {
             return Unauthorized();
         }
@@ -330,7 +326,7 @@ public class ApplicationController : Controller
 
             return Ok(result.Message);
         }
-        catch (Exception ex)
+        catch (Exception _)
         {
             return Unauthorized();
         }
