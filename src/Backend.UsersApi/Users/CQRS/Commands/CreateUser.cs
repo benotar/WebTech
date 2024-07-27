@@ -7,7 +7,8 @@ using Users.Interfaces;
 
 namespace Users.CQRS.Commands;
 
-public class CreateUserCommand : IRequest<bool>
+public record CreateUserCommandResult(string Message, bool IsSuccess);
+public class CreateUserCommand : IRequest<CreateUserCommandResult>
 {
     public string Username { get; set; }
     public string Password { get; set; }
@@ -17,8 +18,7 @@ public class CreateUserCommand : IRequest<bool>
     public DateTime BirthDate { get; set; }
     public string Address { get; set; }
 }
-
-public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, bool>
+public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, CreateUserCommandResult>
 {
     private readonly IUsersDbContext _db;
 
@@ -27,7 +27,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, bool>
         _db = db;
     }
 
-    public async Task<bool> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<CreateUserCommandResult> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         var existingUser = await _db.Users
             .AnyAsync(u => u.Username == request.Username,
@@ -35,7 +35,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, bool>
 
         if (existingUser)
         {
-            throw new Exception($"User \'{request.Username}\' already exists!");
+            return new CreateUserCommandResult($"User \'{request.Username}\' already exists!", false);
         }
         
         var newUser = new User
@@ -58,6 +58,6 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, bool>
 
         await _db.SaveChangesAsync(cancellationToken);
 
-        return true;
+        return new CreateUserCommandResult($"The user \'{request.FirstName} {request.LastName}\' has been successfully created!", true);
     }
 }

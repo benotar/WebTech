@@ -5,12 +5,13 @@ using Users.Interfaces;
 
 namespace Users.CQRS.Queries;
 
-public class GetUserByIdQuery : IRequest<User>
+public record GetUserByIdQueryResult(User? User, string Message, bool IsSuccess);
+
+public class GetUserByIdQuery : IRequest<GetUserByIdQueryResult>
 {
     public int Id;
 }
-
-public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, User>
+public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, GetUserByIdQueryResult>
 {
     private readonly IUsersDbContext _db;
 
@@ -19,8 +20,12 @@ public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, User>
         _db = db;
     }
 
-    public async Task<User> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+    public async Task<GetUserByIdQueryResult> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _db.Users.Where(u => u.Id == request.Id).FirstOrDefaultAsync(cancellationToken);
+        var existingUser = await _db.Users.Where(u => u.Id == request.Id).FirstOrDefaultAsync(cancellationToken);
+
+        return existingUser is null
+            ? new GetUserByIdQueryResult(null, $"User with ID {request.Id} not found!", false)
+            : new GetUserByIdQueryResult(existingUser, $"User with ID {request.Id} successfully found!", true);
     }
 }

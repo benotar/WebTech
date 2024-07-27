@@ -24,6 +24,8 @@ public class UserController : Controller
 
 
     [HttpPost("register")]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
     {
         DateTime birthDate = default;
@@ -41,7 +43,6 @@ public class UserController : Controller
             }
         }
         
-        
         var command = new CreateUserCommand
         {
             Username = request.Username,
@@ -53,19 +54,19 @@ public class UserController : Controller
             Address = request.Address
         };
 
-        try
+        var result = await _mediator.Send(command);
+        
+        if (!result.IsSuccess)
         {
-            var result = await _mediator.Send(command);
+            return BadRequest(result.Message);
+        }
 
-            return Ok(new { Message = "User registered successfully!" });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { Message = ex.Message, });
-        }
+        return Ok(result.Message);
     }
 
     [HttpPost("login")]
+    [ProducesResponseType(typeof(ActionResult<User>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ActionResult<User>), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<User>> Login([FromBody] LoginUserRequest request)
     {
         var command = new LoginUserQuery
@@ -74,28 +75,40 @@ public class UserController : Controller
             Password = request.Password
         };
 
-        try
+        var result = await _mediator.Send(command);
+        
+        if (!result.IsSuccess)
         {
-            var jwtToken = await _mediator.Send(command);
+            return BadRequest(result.Message);
+        }
 
-            Response.Cookies.Append("jwt", jwtToken, new CookieOptions
-            {
-                HttpOnly = true
-            });
-            
-            return Ok(new
-            {
-                message = "Success"
-            });
-        }
-        catch (Exception ex)
+        var jwtToken = result.jwt;
+        
+        Response.Cookies.Append("jwt", jwtToken, new CookieOptions
         {
-            return BadRequest(new { Message = ex.Message });
-        }
+            HttpOnly = true
+        });
+        
+        return Ok(result.Message);
     }
 
+    [HttpPost("logout")]
+    [ProducesResponseType(typeof(ActionResult<User>), StatusCodes.Status200OK)]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Delete("jwt");
+
+        return Ok(new
+        {
+            message = "Success"
+        });
+    }
+    
     [HttpGet("me")]
-    public async Task<IActionResult> GetUser()
+    [ProducesResponseType(typeof(ActionResult<User>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ActionResult<User>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ActionResult<User>), StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<User>> GetUser()
     {
         try
         {
@@ -112,26 +125,24 @@ public class UserController : Controller
 
             command.Id = userId;
 
-            var user = await _mediator.Send(command);
+            var result = await _mediator.Send(command);
 
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Message);
+            }
+            
+            var user = result.User;
 
-            return Ok(user);
+            return Ok(new
+            {
+                message = result.Message,
+                user
+            });
         }
         catch (Exception ex)
         {
             return Unauthorized();
         }
     }
-
-    [HttpPost("logout")]
-    public IActionResult Logout()
-    {
-        Response.Cookies.Delete("jwt");
-
-        return Ok(new
-        {
-            message = "Success"
-        });
-    }
-    
 }

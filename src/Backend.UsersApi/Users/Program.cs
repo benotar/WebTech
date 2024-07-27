@@ -1,7 +1,6 @@
 using Users;
 using Users.Helpers;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();

@@ -8,13 +8,13 @@ using Users.Interfaces;
 
 namespace Users.CQRS.Queries;
 
-public class LoginUserQuery : IRequest<string>
+public record LoginUserQueryResult(string jwt,string Message, bool IsSuccess);
+public class LoginUserQuery : IRequest<LoginUserQueryResult>
 {
     public string Username { get; set; }
     public string Password { get; set; }
 }
-
-public class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, string>
+public class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, LoginUserQueryResult>
 {
     private readonly IUsersDbContext _db;
 
@@ -23,10 +23,11 @@ public class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, string>
     public LoginUserQueryHandler(IUsersDbContext db, JwtService jwtService)
     {
         _db = db;
+        
         _jwtService = jwtService;
     }
 
-    public async Task<string> Handle(LoginUserQuery request, CancellationToken cancellationToken)
+    public async Task<LoginUserQueryResult> Handle(LoginUserQuery request, CancellationToken cancellationToken)
     {
         var existingUser = await _db.Users.Where(u => u.Username == request.Username)
             .AsNoTracking()
@@ -34,17 +35,17 @@ public class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, string>
         
         if (existingUser is null)
         {
-            throw new Exception($"Invalid username or password!");
+            return new LoginUserQueryResult(string.Empty,$"Invalid username or password!", false);
         }
 
         if (!CheckPassword(request.Password, existingUser))
         {
-            throw new Exception($"Invalid username or password!");
+            return new LoginUserQueryResult(string.Empty, $"Invalid username or password!", false);
         }
 
         var jwt = _jwtService.Generate(existingUser.Id);
-        
-        return jwt;
+
+        return new LoginUserQueryResult(jwt, "Successful login!", true);
     }
 
     private static bool CheckPassword(string requestPassword, User user)
