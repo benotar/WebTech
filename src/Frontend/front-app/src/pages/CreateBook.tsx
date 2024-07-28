@@ -2,44 +2,44 @@ import React, {SyntheticEvent, useState} from 'react';
 import {Navigate} from "react-router-dom";
 
 const CreateAuthor = () => {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [dateOfBirth, setDateOfBirth] = useState('');
+    const [name, setName] = useState('');
+    const [publicAt, setPublicAt] = useState('');
+    const [genre, setGenre] = useState('');
+    const [authorId, setAuthorId] = useState('');
     const [redirect, setRedirect] = useState(false);
+
 
 
     const submitForm = async (e: SyntheticEvent) => {
         e.preventDefault();
 
-        const response = await fetch('http://api.bg-local.net:8000/Authors/create-author', {
+        const response = await fetch('http://api.bg-local.net:8000/Authors/create-book', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                firstName,
-                lastName,
-                dateOfBirth,
+                name,
+                publicAt,
+                genre,
+                authorId
             }),
             credentials: 'include'
         });
 
-        console.log(firstName,
-            lastName,
-            dateOfBirth);
 
         if (response.ok) {
 
-            alert('The author has been successfully created!');
+            alert('The book has been successfully created!');
 
             setRedirect(true);
         } else {
-            alert('Error creating author!');
+            alert('Error creating book!');
         }
     }
 
     if (redirect) {
-        return <Navigate to={'/authors'}/>
+        return <Navigate to={'/books'}/>
     }
 
     return (
@@ -51,30 +51,39 @@ const CreateAuthor = () => {
                     <input
                         type="text"
                         className="form-control"
-                        placeholder="First Name"
+                        placeholder="Name"
                         required
-                        onChange={e => setFirstName(e.target.value)}
+                        onChange={e => setName(e.target.value)}
                     />
                 </div>
                 <div className="form-floating">
                     <input
                         type="text"
                         className="form-control"
-                        placeholder="Last Name"
+                        placeholder="Public At"
                         required
-                        onChange={e => setLastName(e.target.value)}
+                        onChange={e => setPublicAt(e.target.value)}
                     />
                 </div>
                 <div className="form-floating">
                     <input
-                        type="date"
+                        type="text"
                         className="form-control"
-                        placeholder="Birth date"
+                        placeholder="Genre"
                         required
-                        onChange={e => setDateOfBirth(e.target.value)}
+                        onChange={e => setGenre(e.target.value)}
                     />
                 </div>
-                <button className="btn btn-primary w-100 py-2 font-and-size" type="submit">Create Author</button>
+                <div className="form-floating">
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Author Id"
+                        required
+                        onChange={e => setAuthorId(e.target.value)}
+                    />
+                </div>
+                <button className="btn btn-primary w-100 py-2 font-and-size" type="submit">Create Book</button>
             </form>
         </div>
     );

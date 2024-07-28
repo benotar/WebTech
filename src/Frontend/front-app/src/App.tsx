@@ -7,6 +7,9 @@ import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Authors from "./pages/Authors";
 import LoginAuthor from "./pages/LoginAuthor";
+import CreateAuthor from "./pages/CreateAuthor";
+import Books from "./pages/Books";
+import CreateBook from "./pages/CreateBook";
 
 function App() {
 
@@ -64,6 +67,9 @@ function App() {
                         <Route path="/" element={<Home {...user} />} />
                         <Route path="/authors" element={<Authors/>} />
                         <Route path="/loginAuthor" element={<LoginAuthor/>} />
+                        <Route path="/createAuthor" element={<CreateAuthor/>} />
+                        <Route path="/books" element={<Books/>} />
+                        <Route path="/createBook" element={<CreateBook/>} />
                         <Route path="/login" element={<Login setUserName={(username) => setUser({ ...user, username })} />} />
                         <Route path="/register" element={<Register/>}/>
                     </Routes>

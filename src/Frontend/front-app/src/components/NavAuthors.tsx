@@ -23,8 +23,13 @@ const Nav = () => {
                         </Link>
                     </li>
                     <li className="nav-item">
-                        <Link to={'/loginAuthor'} className="nav-link font-and-size-content" onClick={logout}>
+                        <Link to={'/authors'} className="nav-link font-and-size-content" onClick={logout}>
                             Logout
+                        </Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link to={'/books'} className="nav-link font-and-size-content">
+                            Books
                         </Link>
                     </li>
                 </ul>

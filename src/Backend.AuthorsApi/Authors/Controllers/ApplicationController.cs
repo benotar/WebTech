@@ -29,11 +29,16 @@ public class ApplicationController : Controller
     {
         try
         {
+            if (!string.IsNullOrEmpty(Request.Cookies["jwt"]))
+            {
+                Response.Cookies.Delete("jwt");
+            }
+            
             var jwtToken = _jwtService.Generate();
 
-            Response.Cookies.Append("jwt", jwtToken, new CookieOptions
+            Response.Cookies.Append("JWT", jwtToken, new CookieOptions
             {
-                HttpOnly = true
+                HttpOnly = true,
             });
 
             return Ok("Successful login!");
@@ -48,7 +53,7 @@ public class ApplicationController : Controller
     [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
     public IActionResult Logout()
     {
-        Response.Cookies.Delete("jwt");
+        Response.Cookies.Delete("JWT");
 
         return Ok("Successful logout!");
     }
@@ -61,7 +66,7 @@ public class ApplicationController : Controller
     {
         try
         {
-            var jwt = Request.Cookies["jwt"];
+            var jwt = Request.Cookies["JWT"];
 
             var token = _jwtService.Verify(jwt);
 
@@ -111,7 +116,7 @@ public class ApplicationController : Controller
     {
         try
         {
-            var jwt = Request.Cookies["jwt"];
+            var jwt = Request.Cookies["JWT"];
 
             var token = _jwtService.Verify(jwt);
 
@@ -146,7 +151,7 @@ public class ApplicationController : Controller
     {
         try
         {
-            var jwt = Request.Cookies["jwt"];
+            var jwt = Request.Cookies["JWT"];
 
             var token = _jwtService.Verify(jwt);
 
@@ -173,7 +178,7 @@ public class ApplicationController : Controller
     {
         try
         {
-            var jwt = Request.Cookies["jwt"];
+            var jwt = Request.Cookies["JWT"];
 
             var token = _jwtService.Verify(jwt);
 
@@ -200,7 +205,7 @@ public class ApplicationController : Controller
     {
         try
         {
-            var jwt = Request.Cookies["jwt"];
+            var jwt = Request.Cookies["JWT"];
 
             var token = _jwtService.Verify(jwt);
 
@@ -250,7 +255,7 @@ public class ApplicationController : Controller
     {
         try
         {
-            var jwt = Request.Cookies["jwt"];
+            var jwt = Request.Cookies["JWT"];
 
             var token = _jwtService.Verify(jwt);
 
@@ -286,7 +291,7 @@ public class ApplicationController : Controller
     {
         try
         {
-            var jwt = Request.Cookies["jwt"];
+            var jwt = Request.Cookies["JWT"];
 
             var token = _jwtService.Verify(jwt);
 
@@ -313,7 +318,7 @@ public class ApplicationController : Controller
     {
         try
         {
-            var jwt = Request.Cookies["jwt"];
+            var jwt = Request.Cookies["JWT"];
 
             var token = _jwtService.Verify(jwt);
 
