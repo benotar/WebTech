@@ -12,18 +12,15 @@ function App() {
             <BrowserRouter>
                 <Nav/>
                 <main className="form-signin w-100 m-auto">
-
                     <Routes>
                         <Route path="/" element={<Home/>}/>
                         <Route path="/login" element={<Login/>}/>
                         <Route path="/register" element={<Register/>}/>
                     </Routes>
-
                 </main>
             </BrowserRouter>
         </div>
-    )
-        ;
+    );
 }
 
 export default App;

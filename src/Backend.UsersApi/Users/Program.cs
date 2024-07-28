@@ -15,9 +15,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll",
         corsPolicyBuilder =>
         {
-            corsPolicyBuilder.AllowAnyOrigin()
+            corsPolicyBuilder.WithOrigins("http://bg-local.com:3000", "http://bg-local.com:3001", "http://localhost:3000", "http://localhost:3001")
                 .AllowAnyMethod()
-                .AllowAnyHeader();
+                .AllowAnyHeader()
+                .AllowCredentials();
         });
 });
 
@@ -30,7 +31,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseRouting();
 
