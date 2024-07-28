@@ -9,6 +9,15 @@
   font-size: 26px;
 }
 
+.font-and-size-content {
+  font-family:'Courier New', Courier, monospace;
+  font-size: 22px;
+}
+
+.my-font-family {
+  font-family:'Courier New', Courier, monospace;
+
+}
 .form-signin .form-floating:focus-within {
   z-index: 2;
 }
