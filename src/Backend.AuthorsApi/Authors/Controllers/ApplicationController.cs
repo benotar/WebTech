@@ -29,16 +29,11 @@ public class ApplicationController : Controller
     {
         try
         {
-            if (!string.IsNullOrEmpty(Request.Cookies["jwt"]))
-            {
-                Response.Cookies.Delete("jwt");
-            }
-            
             var jwtToken = _jwtService.Generate();
 
             Response.Cookies.Append("JWT", jwtToken, new CookieOptions
             {
-                HttpOnly = true,
+                HttpOnly = true
             });
 
             return Ok("Successful login!");

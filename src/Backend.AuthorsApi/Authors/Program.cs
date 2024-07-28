@@ -13,7 +13,7 @@ builder.Services.AddScoped<JwtService>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
+    options.AddPolicy("AllowSpecificOrigin",
         corsPolicyBuilder =>
         {
             corsPolicyBuilder.WithOrigins("http://bg-local.com:3000", "http://bg-local.com:3001", "http://localhost:3000", "http://localhost:3001")
@@ -36,7 +36,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 
-app.UseCors("AllowAll");
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthorization();
 

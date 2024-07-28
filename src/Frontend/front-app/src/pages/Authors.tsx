@@ -10,12 +10,17 @@ const Authors = () => {
             <NavAuthors />
             <br /><br />
             <ul className="navbar-nav me-auto mb-2 mb-md-0">
-                    <li className="nav-item">
-                        <Link to={'/createAuthor'} className="nav-link font-and-size-content">
-                            Create Author
-                        </Link>
-                    </li>
-                </ul>
+                <li className="nav-item">
+                    <Link to={'/createAuthor'} className="nav-link font-and-size-content">
+                        Create Author
+                    </Link>
+                </li>
+                <li className="nav-item">
+                    <Link to={'/updateAuthor'} className="nav-link font-and-size-content">
+                        Update Author
+                    </Link>
+                </li>
+            </ul>
         </div>
     );
 };

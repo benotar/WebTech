@@ -10,6 +10,8 @@ import LoginAuthor from "./pages/LoginAuthor";
 import CreateAuthor from "./pages/CreateAuthor";
 import Books from "./pages/Books";
 import CreateBook from "./pages/CreateBook";
+import UpdateBook from "./pages/UpdateBook";
+import UpdateAuthor from "./pages/UpdateAuthor";
 
 function App() {
 
@@ -68,8 +70,10 @@ function App() {
                         <Route path="/authors" element={<Authors/>} />
                         <Route path="/loginAuthor" element={<LoginAuthor/>} />
                         <Route path="/createAuthor" element={<CreateAuthor/>} />
+                        <Route path="/updateAuthor" element={<UpdateAuthor/>} />
                         <Route path="/books" element={<Books/>} />
                         <Route path="/createBook" element={<CreateBook/>} />
+                        <Route path="/updateBook" element={<UpdateBook/>} />
                         <Route path="/login" element={<Login setUserName={(username) => setUser({ ...user, username })} />} />
                         <Route path="/register" element={<Register/>}/>
                     </Routes>

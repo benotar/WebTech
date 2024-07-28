@@ -13,6 +13,11 @@ const Books = () => {
                                 Create Book
                             </Link>
                         </li>
+                        <li className="nav-item">
+                            <Link to={'/updateBook'} className="nav-link font-and-size-content">
+                                Update Book
+                            </Link>
+                        </li>
                     </ul>
                 </div>
             </nav>
