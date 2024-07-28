@@ -5,16 +5,10 @@ import Nav from "./components/Nav";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
+import Authors from "./pages/Authors";
+import LoginAuthor from "./pages/LoginAuthor";
 
 function App() {
-    // const [userId, setUserId] = useState('');
-    // const [username, setUserName] = useState('');
-    // const [passwordSalt, setPasswordSalt] = useState('');
-    // const [passwordHash, setPasswordHash] = useState('');
-    // const [firstName, setFirstName] = useState('');
-    // const [lastName, setLastName] = useState('');
-    // const [dateOfBirth, setDateOfBirth] = useState('');
-    // const [address, setAddress] = useState('');
 
     const[user, setUser] = useState({
         userId: '',
@@ -50,14 +44,6 @@ function App() {
                         address: content.user.address
                     })
 
-                    // setUserId(content.user.id);
-                    // setUserName(content.user.username);
-                    // setPasswordSalt(content.user.passwordSalt);
-                    // setPasswordHash(content.user.passwordHash);
-                    // setFirstName(content.user.firstName);
-                    // setLastName(content.user.lastName);
-                    // setDateOfBirth(content.user.dateOfBirth);
-                    // setAddress(content.user.address);
                 } else {
                     console.error('Failed to fetch user data:', response.statusText);
                 }
@@ -76,6 +62,8 @@ function App() {
                 <main className="form-signin w-100 m-auto">
                     <Routes>
                         <Route path="/" element={<Home {...user} />} />
+                        <Route path="/authors" element={<Authors/>} />
+                        <Route path="/loginAuthor" element={<LoginAuthor/>} />
                         <Route path="/login" element={<Login setUserName={(username) => setUser({ ...user, username })} />} />
                         <Route path="/register" element={<Register/>}/>
                     </Routes>

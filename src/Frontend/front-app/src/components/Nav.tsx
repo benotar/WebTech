@@ -21,6 +21,11 @@ const Nav = (props: { userName: string; setUserName: (username:string) => void }
         menu = (
             <ul className="navbar-nav me-auto mb-2 mb-md-0">
                 <li className="nav-item active">
+                    <Link to={'/authors'} className="nav-link active font-and-size-content">
+                        Authors
+                    </Link>
+                </li>
+                <li className="nav-item active">
                     <Link to={'/login'} className="nav-link active font-and-size-content">
                         Login
                     </Link>
@@ -36,6 +41,11 @@ const Nav = (props: { userName: string; setUserName: (username:string) => void }
         menu = (
             <ul className="navbar-nav me-auto mb-2 mb-md-0">
                 <li className="nav-item active">
+                    <Link to={'/authors'} className="nav-link active font-and-size-content">
+                        Authors
+                    </Link>
+                </li>
+                <li className="nav-item active">
                     <Link to={'/login'} className="nav-link active font-and-size-content" onClick={logout}>
                         Logout
                     </Link>
@@ -48,7 +58,7 @@ const Nav = (props: { userName: string; setUserName: (username:string) => void }
         <nav className="navbar navbar-expand-md navbar-dark bg-dark mb-4">
             <div className="container-fluid">
                 <Link to={'/'} className="navbar-brand font-and-size-content">
-                    Home
+                Home
                 </Link>
                 <div>
                     {menu}
