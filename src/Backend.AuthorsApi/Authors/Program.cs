@@ -36,6 +36,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 
+app.UseHostFiltering();
+
 app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthorization();

@@ -9,7 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Authors.Controllers;
 
 [ApiController]
-[Route("Authors")]
+[Route("authors")]
+[Host("api.bg-local.net")]
 public class ApplicationController : Controller
 {
     private readonly IMediator _mediator;
