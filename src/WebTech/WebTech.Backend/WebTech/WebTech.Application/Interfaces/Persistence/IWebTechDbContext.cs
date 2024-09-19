@@ -6,6 +6,9 @@ namespace WebTech.Application.Interfaces.Persistence;
 public interface IWebTechDbContext
 {
     DbSet<User> Users { get; set; }
+    DbSet<Author> Authors { get; set; }
+    DbSet<Book> Books { get; set; }
+
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

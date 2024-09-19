@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebTech.Persistence;
@@ -11,9 +12,11 @@ using WebTech.Persistence;
 namespace WebTech.Persistence.Migrations
 {
     [DbContext(typeof(WebTechDbContext))]
-    partial class WebTechDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240919120009_Create-Other-Tables-Add-Validations")]
+    partial class CreateOtherTablesAddValidations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
