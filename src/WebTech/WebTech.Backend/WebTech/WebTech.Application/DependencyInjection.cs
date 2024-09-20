@@ -15,6 +15,7 @@ public static class DependencyInjection
         
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<IEncryptionProvider, HmacSha256Provider>();
+        services.AddSingleton<IJwtProvider, JwtProvider>();
         
         return services;
     }
