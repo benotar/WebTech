@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Text;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using WebTech.Application.Configurations;
 using WebTech.Application.Interfaces.Providers;
 using WebTech.Application.Interfaces.Services;
 using WebTech.Application.Providers;
@@ -16,6 +20,28 @@ public static class DependencyInjection
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<IEncryptionProvider, HmacSha256Provider>();
         services.AddSingleton<IJwtProvider, JwtProvider>();
+        
+        return services;
+    }
+
+    public static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration configuration)
+    {
+        var jwtConfig = new JwtConfiguration();
+        
+        configuration.Bind(JwtConfiguration.ConfigurationKey, jwtConfig);
+        
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtConfig.Issuer,
+            ValidAudience = jwtConfig.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecretKey))
+        };
+
+        services.AddSingleton(tokenValidationParameters);
         
         return services;
     }

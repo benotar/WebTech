@@ -68,4 +68,24 @@ public class UserService : IUserService
             ? Result<User>.Success(newUser)
             : Result<User>.Error(ErrorCode.DataNotSavedToDatabase);
     }
+
+    public async Task<Result<User>> GetExistingUser(string userName, string password)
+    {
+        var condition = _queryProvider.ByUserName(userName);
+
+        var existingUser = await _queryProvider.FindByConditionAsync(condition,
+            query => query.FirstOrDefaultAsync());
+        
+        if (existingUser is null)
+        {
+            return Result<User>.Error(ErrorCode.UserNotFound);
+        }
+        
+        var existingUserPasswordSaltAndHash = new SaltAndHash(existingUser.PasswordSalt, existingUser.PasswordHash);
+
+        return await _hmacSha256Provider.VerifyPasswordHash(password, existingUserPasswordSaltAndHash)
+            ? Result<User>.Success(existingUser)
+            : Result<User>.Error(ErrorCode.AuthenticationFailed);
+    }
+
 }

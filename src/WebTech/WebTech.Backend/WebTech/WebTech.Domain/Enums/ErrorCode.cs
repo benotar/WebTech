@@ -4,6 +4,7 @@ public enum ErrorCode
 {
     UsernameAlreadyExists,
     DataNotSavedToDatabase,
-    
+    UserNotFound,
+    AuthenticationFailed,
     Unknown
 }

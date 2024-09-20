@@ -18,6 +18,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.AddCustomConfigurations();
 
 builder.Services.AddApplication()
+    .AddAuth(builder.Configuration)
     .AddPersistence(builder.Configuration);
 
 var app = builder.Build();

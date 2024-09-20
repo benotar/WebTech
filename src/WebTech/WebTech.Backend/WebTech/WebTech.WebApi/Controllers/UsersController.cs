@@ -40,4 +40,16 @@ public class UsersController : BaseController
         return await _userService.CreateAsync(createUser);
     }
 
+    [HttpPost("login")]
+    public async Task<Result<None>> Login(LoginRequestModel loginRequestModel)
+    {
+        var existingUserResult = await _userService.GetExistingUser(loginRequestModel.UserName, loginRequestModel.Password);
+        
+        if (!existingUserResult.IsSucceed)
+        {
+            return Result<None>.Error(existingUserResult.ErrorCode);
+        }
+        
+        return Result<None>.Success();
+    }
 }

@@ -13,7 +13,7 @@ public class Result<TData>
     public static Result<TData> Success(TData data = default)
         => new() { Data = data };
 
-    public static Result<TData> Error(ErrorCode errorCode)
+    public static Result<TData> Error(ErrorCode? errorCode)
         => new() { ErrorCode = errorCode };
 }
 
