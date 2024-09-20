@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using WebTech.Application.Interfaces.Persistence;
 using WebTech.Application.Interfaces.Providers;
@@ -29,18 +30,17 @@ public class QueryProvider<TEntity> : IQueryProvider<TEntity> where TEntity : cl
         return await queryFunc(query.Where(condition));
     }
 
-    public async Task<TResult> GetAsync<TResult>(Func<IQueryable<TEntity>, Task<TResult>> queryFunc,
+    public async Task<List<TResult>> GetAsync<TResult>(
+        Func<IQueryable<TEntity>, Task<List<TResult>>> queryFunc,
         Expression<Func<TEntity, bool>> condition = null, bool isTracking = false)
     {
         var query = isTracking
             ? _dbContext.Set<TEntity>().AsTracking()
             : _dbContext.Set<TEntity>().AsNoTracking();
 
-        if (condition is not null)
-        {
-            return await queryFunc(query.Where(condition));
-        }
 
-        return await queryFunc(query);
+        return condition is null
+            ? await queryFunc(query)
+            : await queryFunc(query.Where(condition));
     }
 }

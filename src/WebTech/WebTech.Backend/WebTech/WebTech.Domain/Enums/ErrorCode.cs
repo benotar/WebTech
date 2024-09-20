@@ -4,4 +4,6 @@ public enum ErrorCode
 {
     UsernameAlreadyExists,
     DataNotSavedToDatabase,
+    
+    Unknown
 }

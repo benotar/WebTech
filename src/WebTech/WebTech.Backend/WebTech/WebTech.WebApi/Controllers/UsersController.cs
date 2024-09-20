@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections;
+using Microsoft.AspNetCore.Mvc;
 using WebTech.Application.Common;
 using WebTech.Application.DTOs;
 using WebTech.Application.Interfaces.Services;
@@ -18,9 +19,9 @@ public class UsersController : BaseController
     }
 
     [HttpGet("get")]
-    public async Task<IActionResult> Get()
+    public async Task<Result<IEnumerable<User>>> Get()
     {
-        return Ok("Hello from bg-local.com");
+        return await _userService.GetAsync();
     }
 
     [HttpPost("register")]

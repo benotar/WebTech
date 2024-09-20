@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections;
+using Microsoft.EntityFrameworkCore;
 using WebTech.Application.Common;
 using WebTech.Application.DTOs;
 using WebTech.Application.Interfaces.Persistence;
@@ -25,6 +26,15 @@ public class UserService : IUserService
         _hmacSha256Provider = hmacSha256Provider;
     }
 
+    public async Task<Result<IEnumerable<User>>> GetAsync()
+    {
+        var users = await _queryProvider.GetAsync(query => query.ToListAsync());
+
+        return users.Count > 0
+            ? Result<IEnumerable<User>>.Success(users)
+            : Result<IEnumerable<User>>.Error(ErrorCode.Unknown);
+    }
+    
     public async Task<Result<User>> CreateAsync(CreateUserDto createUserDto)
     {
         var condition = _queryProvider.ByUserName(createUserDto.UserName);

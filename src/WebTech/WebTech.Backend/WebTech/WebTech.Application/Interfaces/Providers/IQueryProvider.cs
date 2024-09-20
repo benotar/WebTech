@@ -11,6 +11,6 @@ public interface IQueryProvider<TEntity> where TEntity: class
         Func<IQueryable<TEntity>, Task<TResult>> queryFunc,
         bool isTracking = false);
 
-    Task<TResult> GetAsync<TResult>(Func<IQueryable<TEntity>, Task<TResult>> queryFunc,
+    Task<List<TResult>> GetAsync<TResult>(Func<IQueryable<TEntity>, Task<List<TResult>>> queryFunc,
         Expression<Func<TEntity, bool>> condition = null, bool isTracking = false);
 }

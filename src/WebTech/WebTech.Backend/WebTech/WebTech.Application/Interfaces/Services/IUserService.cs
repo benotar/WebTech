@@ -8,4 +8,6 @@ public interface IUserService
 {
     Task<Result<User>> CreateAsync(CreateUserDto createUserDto);
     
+    Task<Result<IEnumerable<User>>> GetAsync();
+
 }
