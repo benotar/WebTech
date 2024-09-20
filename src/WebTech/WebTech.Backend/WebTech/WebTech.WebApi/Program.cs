@@ -3,6 +3,9 @@ using WebTech.Persistence;
 using WebTech.WebApi;
 using WebTech.WebApi.Middleware;
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();

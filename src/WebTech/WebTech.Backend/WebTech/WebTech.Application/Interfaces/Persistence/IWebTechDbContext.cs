@@ -9,6 +9,6 @@ public interface IWebTechDbContext
     DbSet<Author> Authors { get; set; }
     DbSet<Book> Books { get; set; }
 
-
+    DbSet<TEntity> Set<TEntity>() where TEntity : class;
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
