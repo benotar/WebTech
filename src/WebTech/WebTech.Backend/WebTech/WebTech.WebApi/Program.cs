@@ -1,4 +1,6 @@
 using WebTech.Application;
+using WebTech.Application.Common.Converters;
+using WebTech.Domain.Enums;
 using WebTech.Persistence;
 using WebTech.WebApi;
 using WebTech.WebApi.Middleware;
@@ -8,7 +10,10 @@ AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new SnakeCaseStringEnumConverter<ErrorCode>());
+});
 
 builder.AddCustomConfigurations();
 

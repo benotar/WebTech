@@ -22,11 +22,21 @@ public class UsersController : BaseController
     {
         return Ok("Hello from bg-local.com");
     }
-    
+
     [HttpPost("register")]
-    [ProducesResponseType(typeof(Result<User>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result<User>), StatusCodes.Status400BadRequest)]
-    public async Task<Result<User>> Register(CreateUserDto registerRequestModel)
-        => await _userService.CreateAsync(registerRequestModel);
+    public async Task<Result<User>> Register(RegisterRequestModel registerRequestModel)
+    {
+        var createUser = new CreateUserDto
+        {
+            UserName = registerRequestModel.UserName,
+            FirstName = registerRequestModel.FirstName,
+            LastName = registerRequestModel.LastName,
+            Password = registerRequestModel.Password,
+            BirthDate = registerRequestModel.BirthDate,
+            Address = registerRequestModel.Address
+        };
+
+        return await _userService.CreateAsync(createUser);
+    }
 
 }
