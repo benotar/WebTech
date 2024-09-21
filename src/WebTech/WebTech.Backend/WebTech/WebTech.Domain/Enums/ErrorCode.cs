@@ -10,6 +10,6 @@ public enum ErrorCode
     RefreshCookieNotFound,
     InvalidRefreshToken,
     FingerprintCookieNotFound,
-    
+    UserIdNotValid,
     Unknown
 }
