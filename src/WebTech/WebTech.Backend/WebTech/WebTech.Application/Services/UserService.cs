@@ -21,14 +21,15 @@ public class UserService : IUserService
     public UserService(IWebTechDbContext dbContext, IQueryProvider<User> queryProvider, IEncryptionProvider hmacSha256Provider)
     {
         _dbContext = dbContext;
-        
+
         _queryProvider = queryProvider;
+        
         _hmacSha256Provider = hmacSha256Provider;
     }
 
     public async Task<Result<IEnumerable<User>>> GetAsync()
     {
-        var users = await _queryProvider.GetAsync(query => query.ToListAsync());
+        var users = await _queryProvider.ExecuteQueryAsync(query => query.ToListAsync());
 
         return users.Count > 0
             ? Result<IEnumerable<User>>.Success(users)
@@ -37,11 +38,9 @@ public class UserService : IUserService
     
     public async Task<Result<User>> CreateAsync(CreateUserDto createUserDto)
     {
-        var condition = _queryProvider.ByUserName(createUserDto.UserName);
-
-        var isUserExist = await _queryProvider.FindByConditionAsync(condition,
-            query => query.AnyAsync());
-
+        var isUserExist = await _queryProvider.ExecuteQueryAsync(query => query.AnyAsync(),
+            _queryProvider.ByUserName(createUserDto.UserName));
+        
         if (isUserExist)
         {
             return Result<User>.Error(ErrorCode.UsernameAlreadyExists);
@@ -70,11 +69,9 @@ public class UserService : IUserService
     }
 
     public async Task<Result<User>> GetExistingUser(string userName, string password)
-    {
-        var condition = _queryProvider.ByUserName(userName);
-
-        var existingUser = await _queryProvider.FindByConditionAsync(condition,
-            query => query.FirstOrDefaultAsync());
+    { 
+        var existingUser = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
+            _queryProvider.ByUserName(userName));
         
         if (existingUser is null)
         {
