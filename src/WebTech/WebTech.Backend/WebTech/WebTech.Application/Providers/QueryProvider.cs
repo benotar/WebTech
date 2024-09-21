@@ -21,9 +21,9 @@ public class QueryProvider<TEntity> : IQueryProvider<TEntity> where TEntity : cl
         => entity => EF.Property<string>(entity, 
             nameof(userName).ToValidUserNamePropertyName()).Equals(userName);
 
-    public Expression<Func<TEntity, bool>> ByUserId(Guid userId)
+    public Expression<Func<TEntity, bool>> ByEntityId(Guid entityId)
         => entity => EF.Property<Guid>(entity,
-            nameof(userId).ToValidUserIdPropertyName()).Equals(userId);
+            nameof(entityId).ToValidEntityIdPropertyName()).Equals(entityId);
 
     public async Task<TResult> ExecuteQueryAsync<TResult>(Func<IQueryable<TEntity>, Task<TResult>> queryFunc,
         Expression<Func<TEntity, bool>>? condition = null, bool isTracking = false)

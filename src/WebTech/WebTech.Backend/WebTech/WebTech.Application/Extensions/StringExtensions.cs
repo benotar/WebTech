@@ -8,10 +8,10 @@ public static class StringExtensions
             ? str
             : char.ToUpper(str[0]) + str[1..];
     }
-    public static string ToValidUserIdPropertyName(this string str)
+    public static string ToValidEntityIdPropertyName(this string str)
     {
         return string.IsNullOrEmpty(str)
             ? str
-            : str.Replace("user", "").Trim();
+            : str.Replace("entity", "").Trim();
     }
 }
