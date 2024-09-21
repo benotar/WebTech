@@ -26,6 +26,9 @@ var app = builder.Build();
 
 app.UseHostFilteringMiddleware();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 
 app.MapGet("/", () => $"Welcome to the Home Page WebTech API!\nUTC Time: {DateTime.UtcNow}");

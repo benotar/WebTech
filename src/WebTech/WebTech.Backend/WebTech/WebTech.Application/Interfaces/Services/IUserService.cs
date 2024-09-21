@@ -10,5 +10,7 @@ public interface IUserService
     
     Task<Result<IEnumerable<User>>> GetAsync();
 
+    Task<Result<User>> GetCurrentAsync(Guid userId);
+    
     Task<Result<User>> GetExistingUser(string userName, string password);
 }

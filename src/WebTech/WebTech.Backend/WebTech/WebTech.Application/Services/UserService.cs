@@ -35,7 +35,17 @@ public class UserService : IUserService
             ? Result<IEnumerable<User>>.Success(users)
             : Result<IEnumerable<User>>.Error(ErrorCode.Unknown);
     }
-    
+
+    public async Task<Result<User>> GetCurrentAsync(Guid userId)
+    {
+        var existingUser = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
+            _queryProvider.ByUserId(userId));
+        
+        return existingUser is not null
+            ? Result<User>.Success(existingUser)
+            : Result<User>.Error(ErrorCode.UserNotFound);
+    }
+
     public async Task<Result<User>> CreateAsync(CreateUserDto createUserDto)
     {
         var isUserExist = await _queryProvider.ExecuteQueryAsync(query => query.AnyAsync(),

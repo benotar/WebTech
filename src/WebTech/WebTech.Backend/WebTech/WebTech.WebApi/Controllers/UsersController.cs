@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebTech.Application.Common;
 using WebTech.Application.DTOs;
@@ -36,6 +37,14 @@ public class UsersController : BaseController
     {
         return await _userService.GetAsync();
     }
+    
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<Result<User>> GetCurrent()
+    {
+        return await _userService.GetCurrentAsync(GetUserId());
+    }
+
 
     [HttpPost("register")]
     public async Task<Result<User>> Register(RegisterRequestModel registerRequestModel)

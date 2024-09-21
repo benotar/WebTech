@@ -4,7 +4,7 @@ namespace WebTech.Application.Common;
 
 public class Result<TData>
 {
-    public TData Data { get; private set; }
+    public TData? Data { get; private set; }
 
     public ErrorCode? ErrorCode { get; private set; }
 
