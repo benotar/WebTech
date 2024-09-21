@@ -11,5 +11,8 @@ public enum ErrorCode
     InvalidRefreshToken,
     FingerprintCookieNotFound,
     UserIdNotValid,
+    AuthorAlreadyExists,
+    AuthorNotFound,
+    AuthorDataIsTheSame,
     Unknown
 }

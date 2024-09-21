@@ -2,7 +2,7 @@
 
 public static class StringExtensions
 {
-    public static string ToValidUserNamePropertyName(this string str)
+    public static string ToValidPropertyName(this string str)
     {
         return string.IsNullOrEmpty(str)
             ? str

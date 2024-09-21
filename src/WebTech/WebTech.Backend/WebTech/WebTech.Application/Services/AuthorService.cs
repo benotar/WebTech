@@ -1,29 +1,110 @@
-﻿using WebTech.Application.Common;
+﻿using Microsoft.EntityFrameworkCore;
+using WebTech.Application.Common;
 using WebTech.Application.DTOs;
+using WebTech.Application.Extensions;
+using WebTech.Application.Interfaces.Persistence;
+using WebTech.Application.Interfaces.Providers;
 using WebTech.Application.Interfaces.Services;
 using WebTech.Domain.Entities.Database;
+using WebTech.Domain.Enums;
 
 namespace WebTech.Application.Services;
 
 public class AuthorService : IAuthorService
 {
-    public Task<Result<Author>> CreateAsync(CreateOrUpdateAuthorDto createOrUpdateAuthorDto)
+    private readonly IQueryProvider<Author> _queryProvider;
+
+    private readonly IWebTechDbContext _dbContext;
+
+    private readonly IDateTimeProvider _dateTimeProvider;
+
+    public AuthorService(IQueryProvider<Author> queryProvider, IWebTechDbContext dbContext, IDateTimeProvider dateTimeProvider)
     {
-        throw new NotImplementedException();
+        _queryProvider = queryProvider;
+
+        _dbContext = dbContext;
+        
+        _dateTimeProvider = dateTimeProvider;
     }
 
-    public Task<Result<Author>> GetCurrentAsync(Guid userId)
+    public async Task<Result<Author>> CreateAsync(CreateOrUpdateAuthorDto createOrUpdateAuthorDto)
     {
-        throw new NotImplementedException();
+        var condition = _queryProvider.ByAuthorFirstName(createOrUpdateAuthorDto.FirstName)
+            .And(_queryProvider.ByAuthorLastName(createOrUpdateAuthorDto.LastName));
+
+        var isAuthorExists = await _queryProvider.ExecuteQueryAsync(query => query.AnyAsync(),
+            condition);
+
+        if (isAuthorExists)
+        {
+            return Result<Author>.Error(ErrorCode.AuthorAlreadyExists);
+        }
+
+        var newAuthor = new Author
+        {
+            FirstName = createOrUpdateAuthorDto.FirstName,
+            LastName = createOrUpdateAuthorDto.LastName,
+            BirthDate = createOrUpdateAuthorDto.BirthDate
+        };
+
+        await _dbContext.Authors.AddAsync(newAuthor);
+
+        await _dbContext.SaveChangesAsync();
+
+        return Result<Author>.Success(newAuthor);
     }
 
-    public Task<Result<Author>> UpdateAsync(Guid userId, CreateOrUpdateAuthorDto createOrUpdateAuthorDto)
+    public async Task<Result<Author>> GetCurrentAsync(Guid authorId)
     {
-        throw new NotImplementedException();
+        var existingAuthor = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
+            _queryProvider.ByEntityId(authorId));
+
+        return existingAuthor is not null
+            ? Result<Author>.Success(existingAuthor)
+            : Result<Author>.Error(ErrorCode.AuthorNotFound);
     }
 
-    public Task<Result<Author>> DeleteAsync(Guid userId, CreateOrUpdateAuthorDto createOrUpdateAuthorDto)
+    public async Task<Result<Author>> UpdateAsync(Guid authorId, CreateOrUpdateAuthorDto createOrUpdateAuthorDto)
     {
-        throw new NotImplementedException();
+        var existingAuthor = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
+            _queryProvider.ByEntityId(authorId), isTracking: true);
+
+        if (existingAuthor is null)
+        {
+            return Result<Author>.Error(ErrorCode.AuthorNotFound);
+        }
+        
+        if (string.Equals(createOrUpdateAuthorDto.FirstName, existingAuthor.FirstName, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(createOrUpdateAuthorDto.LastName, existingAuthor.LastName, StringComparison.OrdinalIgnoreCase)
+            && createOrUpdateAuthorDto.BirthDate == existingAuthor.BirthDate)
+        {
+            return Result<Author>.Error(ErrorCode.AuthorDataIsTheSame);
+        }
+
+        existingAuthor.FirstName = createOrUpdateAuthorDto.FirstName;
+        existingAuthor.LastName = createOrUpdateAuthorDto.LastName;
+        existingAuthor.BirthDate = createOrUpdateAuthorDto.BirthDate;
+        existingAuthor.UpdatedAt = _dateTimeProvider.UtcNow;
+
+        await _dbContext.SaveChangesAsync();
+
+        return Result<Author>.Success(existingAuthor);
+    }
+
+    public async Task<Result<None>> DeleteAsync(Guid authorId)
+    {
+        var existingAuthor = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
+            _queryProvider.ByEntityId(authorId));
+
+        if (existingAuthor is null)
+        {
+            return Result<None>.Error(ErrorCode.AuthorNotFound);
+        }
+
+        _dbContext.Authors.Remove(existingAuthor);
+
+        await _dbContext.SaveChangesAsync();
+
+        return Result<None>.Success();
     }
 }

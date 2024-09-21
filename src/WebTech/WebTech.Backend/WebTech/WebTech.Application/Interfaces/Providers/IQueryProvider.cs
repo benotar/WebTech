@@ -6,6 +6,11 @@ public interface IQueryProvider<TEntity> where TEntity : class
 {
     Expression<Func<TEntity, bool>> ByUserName(string userName);
     
+    Expression<Func<TEntity, bool>> ByAuthorFirstName(string firstName);
+
+    Expression<Func<TEntity, bool>> ByAuthorLastName(string lastName);
+
+    
     Expression<Func<TEntity, bool>> ByEntityId(Guid entityId);
     
     Task<TResult> ExecuteQueryAsync<TResult>(Func<IQueryable<TEntity>, Task<TResult>> queryFunc,

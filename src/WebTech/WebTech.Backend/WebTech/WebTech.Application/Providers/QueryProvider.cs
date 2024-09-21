@@ -19,7 +19,15 @@ public class QueryProvider<TEntity> : IQueryProvider<TEntity> where TEntity : cl
 
     public Expression<Func<TEntity, bool>> ByUserName(string userName)
         => entity => EF.Property<string>(entity, 
-            nameof(userName).ToValidUserNamePropertyName()).Equals(userName);
+            nameof(userName).ToValidPropertyName()).Equals(userName);
+
+    public Expression<Func<TEntity, bool>> ByAuthorFirstName(string firstName)
+        => entity => EF.Property<string>(entity, 
+            nameof(firstName).ToValidPropertyName()).Equals(firstName);
+
+    public Expression<Func<TEntity, bool>> ByAuthorLastName(string lastName)
+        => entity => EF.Property<string>(entity, 
+            nameof(lastName).ToValidPropertyName()).Equals(lastName);
 
     public Expression<Func<TEntity, bool>> ByEntityId(Guid entityId)
         => entity => EF.Property<Guid>(entity,
