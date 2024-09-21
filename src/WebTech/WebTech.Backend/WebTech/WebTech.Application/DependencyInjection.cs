@@ -16,10 +16,12 @@ public static class DependencyInjection
     {
         services.AddScoped(typeof(IQueryProvider<>), typeof(QueryProvider<>));
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IRefreshTokenSessionService, RefreshTokenSessionService>();
         
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<IEncryptionProvider, HmacSha256Provider>();
         services.AddSingleton<IJwtProvider, JwtProvider>();
+        services.AddSingleton<ICookiesProvider, CookiesProvider>();
         
         return services;
     }
