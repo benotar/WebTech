@@ -19,7 +19,8 @@ builder.AddCustomConfigurations();
 
 builder.Services.AddApplication()
     .AddAuth(builder.Configuration)
-    .AddPersistence(builder.Configuration);
+    .AddPersistence(builder.Configuration)
+    .AddRedis(builder.Configuration);
 
 var app = builder.Build();
 

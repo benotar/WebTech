@@ -7,5 +7,9 @@ public enum ErrorCode
     UserNotFound,
     AuthenticationFailed,
     SessionNotFound,
+    RefreshCookieNotFound,
+    InvalidRefreshToken,
+    FingerprintCookieNotFound,
+    
     Unknown
 }

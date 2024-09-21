@@ -26,5 +26,10 @@ public static class DependencyInjection
             builder.Configuration.GetSection(RefreshTokenSessionConfiguration.ConfigurationKey));
         builder.Services.AddSingleton(resolver =>
             resolver.GetRequiredService<IOptions<RefreshTokenSessionConfiguration>>().Value);
+        
+        builder.Services.Configure<CookiesConfiguration>(
+            builder.Configuration.GetSection(CookiesConfiguration.ConfigurationKey));
+        builder.Services.AddSingleton(resolver =>
+            resolver.GetRequiredService<IOptions<CookiesConfiguration>>().Value);
     }
 }

@@ -18,13 +18,17 @@ public class UsersController : BaseController
     private readonly IJwtProvider _jwtProvider;
 
     private readonly IRefreshTokenSessionService _refreshTokenSessionService;
-    public UsersController(IUserService userService, IJwtProvider jwtProvider, IRefreshTokenSessionService refreshTokenSessionService)
+
+    private readonly ICookiesProvider _cookiesProvider;
+    public UsersController(IUserService userService, IJwtProvider jwtProvider, IRefreshTokenSessionService refreshTokenSessionService, ICookiesProvider cookiesProvider)
     {
         _userService = userService;
         
         _jwtProvider = jwtProvider;
         
         _refreshTokenSessionService = refreshTokenSessionService;
+        
+        _cookiesProvider = cookiesProvider;
     }
 
     [HttpGet("get")]
@@ -66,6 +70,40 @@ public class UsersController : BaseController
 
         await _refreshTokenSessionService.CreateOrUpdateAsync(user.Id, loginRequestModel.Fingerprint, refreshToken);
         
+        _cookiesProvider.AddTokensCookiesToResponse(HttpContext.Response,accessToken, refreshToken);
+        _cookiesProvider.AddFingerprintCookiesToResponse(HttpContext.Response, loginRequestModel.Fingerprint);
+        
+        return Result<None>.Success();
+    }
+
+    [HttpPost("logout")]
+    public async Task<Result<None>> Logout()
+    {
+        var refreshToken = _cookiesProvider.GetTokensFromCookies(HttpContext.Request).RefreshToken;
+
+        if (refreshToken is null)
+        {
+            return Result<None>.Error(ErrorCode.RefreshCookieNotFound);
+        }
+
+        if (!_jwtProvider.IsTokenValid(refreshToken, JwtTokenType.Refresh))
+        {
+            return Result<None>.Error(ErrorCode.InvalidRefreshToken);
+        }
+
+        var fingerprint = _cookiesProvider.GetFingerprintFromCookies(HttpContext.Request);
+        
+        if (string.IsNullOrEmpty(fingerprint))
+        {
+            return Result<None>.Error(ErrorCode.FingerprintCookieNotFound);
+        }
+
+        var userId = _jwtProvider.GetUserIdFromRefreshToken(refreshToken);
+
+        await _refreshTokenSessionService.DeleteAsync(userId, fingerprint);
+        
+        _cookiesProvider.DeleteCookiesFromResponse(HttpContext.Response);
+
         return Result<None>.Success();
     }
 }
