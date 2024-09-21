@@ -6,5 +6,6 @@ public enum ErrorCode
     DataNotSavedToDatabase,
     UserNotFound,
     AuthenticationFailed,
+    SessionNotFound,
     Unknown
 }

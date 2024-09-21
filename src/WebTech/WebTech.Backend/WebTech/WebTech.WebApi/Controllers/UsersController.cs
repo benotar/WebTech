@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using WebTech.Application.Common;
 using WebTech.Application.DTOs;
+using WebTech.Application.Interfaces.Providers;
 using WebTech.Application.Interfaces.Services;
 using WebTech.Domain.Entities.Database;
+using WebTech.Domain.Enums;
 using WebTech.WebApi.Models.Authentication;
 
 namespace WebTech.WebApi.Controllers;
@@ -13,9 +15,16 @@ public class UsersController : BaseController
 {
     private readonly IUserService _userService;
 
-    public UsersController(IUserService userService)
+    private readonly IJwtProvider _jwtProvider;
+
+    private readonly IRefreshTokenSessionService _refreshTokenSessionService;
+    public UsersController(IUserService userService, IJwtProvider jwtProvider, IRefreshTokenSessionService refreshTokenSessionService)
     {
         _userService = userService;
+        
+        _jwtProvider = jwtProvider;
+        
+        _refreshTokenSessionService = refreshTokenSessionService;
     }
 
     [HttpGet("get")]
@@ -49,6 +58,13 @@ public class UsersController : BaseController
         {
             return Result<None>.Error(existingUserResult.ErrorCode);
         }
+
+        var user = existingUserResult.Data;
+
+        var accessToken = _jwtProvider.GenerateToken(user.Id, JwtTokenType.Access);
+        var refreshToken = _jwtProvider.GenerateToken(user.Id, JwtTokenType.Refresh);
+
+        await _refreshTokenSessionService.CreateOrUpdateAsync(user.Id, loginRequestModel.Fingerprint, refreshToken);
         
         return Result<None>.Success();
     }
