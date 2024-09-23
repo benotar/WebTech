@@ -33,7 +33,7 @@ public class UserService : IUserService
 
         return users.Count > 0
             ? Result<IEnumerable<User>>.Success(users)
-            : Result<IEnumerable<User>>.Error(ErrorCode.Unknown);
+            : Result<IEnumerable<User>>.Error(ErrorCode.UnknownError);
     }
 
     public async Task<Result<User>> GetCurrentAsync(Guid userId)

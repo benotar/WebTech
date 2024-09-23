@@ -76,7 +76,7 @@ public class BookService : IBookService
 
         return books.Count > 0
             ? Result<IEnumerable<Book>>.Success(books)
-            : Result<IEnumerable<Book>>.Error(ErrorCode.Unknown);
+            : Result<IEnumerable<Book>>.Error(ErrorCode.UnknownError);
     }
 
     public async Task<Result<Book>> GetByIdAndAuthorAsync(Guid bookId, string authorFirstName, string authorLastName)

@@ -61,7 +61,7 @@ public class AuthorService : IAuthorService
 
         return authors.Count != 0
             ? Result<IEnumerable<Author>>.Success(authors)
-            : Result<IEnumerable<Author>>.Error(ErrorCode.Unknown);
+            : Result<IEnumerable<Author>>.Error(ErrorCode.UnknownError);
     }
 
     public async Task<Result<Author>> GetCurrentAsync(Guid authorId)

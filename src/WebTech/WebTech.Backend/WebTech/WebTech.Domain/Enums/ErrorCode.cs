@@ -17,5 +17,6 @@ public enum ErrorCode
     BookDataIsTheSame,
     BookAlreadyExists,
     BookNotFound,
-    Unknown
+    AuthenticationServiceUnavailable,
+    UnknownError
 }

@@ -24,6 +24,8 @@ builder.Services.AddApplication()
 
 var app = builder.Build();
 
+app.UseCustomExceptionHandler();
+
 app.UseHostFilteringMiddleware();
 
 app.UseAuthentication();
