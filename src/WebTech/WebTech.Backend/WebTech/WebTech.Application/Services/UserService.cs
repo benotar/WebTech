@@ -49,7 +49,7 @@ public class UserService : IUserService
     public async Task<Result<User>> CreateAsync(CreateUserDto createUserDto)
     {
         var isUserExist = await _queryProvider.ExecuteQueryAsync(query => query.AnyAsync(),
-            _queryProvider.ByUserName(createUserDto.UserName));
+            _queryProvider.ByPropertyName(nameof(createUserDto.UserName), createUserDto.UserName));
         
         if (isUserExist)
         {
@@ -79,9 +79,9 @@ public class UserService : IUserService
     }
 
     public async Task<Result<User>> GetExistingUser(string userName, string password)
-    { 
+    {
         var existingUser = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
-            _queryProvider.ByUserName(userName));
+            _queryProvider.ByPropertyName(nameof(userName), userName, isEntityNameBeginLower: true));
         
         if (existingUser is null)
         {

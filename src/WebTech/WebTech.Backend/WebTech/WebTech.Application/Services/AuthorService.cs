@@ -18,19 +18,21 @@ public class AuthorService : IAuthorService
 
     private readonly IDateTimeProvider _dateTimeProvider;
 
-    public AuthorService(IQueryProvider<Author> queryProvider, IWebTechDbContext dbContext, IDateTimeProvider dateTimeProvider)
+    public AuthorService(IQueryProvider<Author> queryProvider, IWebTechDbContext dbContext,
+        IDateTimeProvider dateTimeProvider)
     {
         _queryProvider = queryProvider;
 
         _dbContext = dbContext;
-        
+
         _dateTimeProvider = dateTimeProvider;
     }
 
     public async Task<Result<Author>> CreateAsync(CreateOrUpdateAuthorDto createOrUpdateAuthorDto)
     {
-        var condition = _queryProvider.ByAuthorFirstName(createOrUpdateAuthorDto.FirstName)
-            .And(_queryProvider.ByAuthorLastName(createOrUpdateAuthorDto.LastName));
+        var condition = _queryProvider.ByAuthorFullName(
+            createOrUpdateAuthorDto.FirstName,
+            createOrUpdateAuthorDto.LastName);
 
         var isAuthorExists = await _queryProvider.ExecuteQueryAsync(query => query.AnyAsync(),
             condition);
@@ -68,14 +70,16 @@ public class AuthorService : IAuthorService
     {
         var existingAuthor = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
             _queryProvider.ByEntityId(authorId), isTracking: true);
-
+        
         if (existingAuthor is null)
         {
             return Result<Author>.Error(ErrorCode.AuthorNotFound);
         }
-        
-        if (string.Equals(createOrUpdateAuthorDto.FirstName, existingAuthor.FirstName, StringComparison.OrdinalIgnoreCase)
-            && string.Equals(createOrUpdateAuthorDto.LastName, existingAuthor.LastName, StringComparison.OrdinalIgnoreCase)
+
+        if (string.Equals(createOrUpdateAuthorDto.FirstName, existingAuthor.FirstName,
+                StringComparison.OrdinalIgnoreCase)
+            && string.Equals(createOrUpdateAuthorDto.LastName, existingAuthor.LastName,
+                StringComparison.OrdinalIgnoreCase)
             && createOrUpdateAuthorDto.BirthDate == existingAuthor.BirthDate)
         {
             return Result<Author>.Error(ErrorCode.AuthorDataIsTheSame);
@@ -106,5 +110,17 @@ public class AuthorService : IAuthorService
         await _dbContext.SaveChangesAsync();
 
         return Result<None>.Success();
+    }
+
+    public async Task<Result<Author>> GetAuthorByNamesAsync(string firstName, string lastName)
+    {
+        var existingAuthorCondition = _queryProvider.ByAuthorFullName(firstName, lastName);
+        
+        var existingAuthor = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
+            existingAuthorCondition);
+
+        return existingAuthor is null
+            ? Result<Author>.Error(ErrorCode.AuthorNotFound)
+            : Result<Author>.Success(existingAuthor);
     }
 }

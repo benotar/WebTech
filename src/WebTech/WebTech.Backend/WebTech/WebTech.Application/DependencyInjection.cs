@@ -19,7 +19,7 @@ public static class DependencyInjection
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRefreshTokenSessionService, RefreshTokenSessionService>();
         services.AddScoped<IAuthorService, AuthorService>();
-
+        services.AddScoped<IBookService, BookService>();
         
         
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();

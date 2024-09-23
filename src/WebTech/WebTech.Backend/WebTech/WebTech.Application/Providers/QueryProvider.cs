@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using WebTech.Application.Extensions;
 using WebTech.Application.Interfaces.Persistence;
 using WebTech.Application.Interfaces.Providers;
-using WebTech.Domain.Entities.Database;
 
 namespace WebTech.Application.Providers;
 
@@ -16,22 +14,29 @@ public class QueryProvider<TEntity> : IQueryProvider<TEntity> where TEntity : cl
     {
         _dbContext = dbContext;
     }
+    
+    public Expression<Func<TEntity, bool>> ByPropertyName(string propertyName, string propertyValue, bool isEntityNameBeginLower = false)
+    {
+        if (isEntityNameBeginLower)
+        {
+            propertyName = propertyName.ToValidPropertyName();
+        }
+        
+        return entity => EF.Property<string>(entity,
+            propertyName).Equals(propertyValue);
+    }
+    
+    public Expression<Func<TEntity, bool>> ByAuthorFullName(string firstName, string lastName)
+    {
+        return entity => EF.Property<string>(entity, nameof(firstName).ToValidPropertyName()).Equals(firstName)
+                         && EF.Property<string>(entity, nameof(lastName).ToValidPropertyName()).Equals(lastName);
+    }
 
-    public Expression<Func<TEntity, bool>> ByUserName(string userName)
-        => entity => EF.Property<string>(entity, 
-            nameof(userName).ToValidPropertyName()).Equals(userName);
-
-    public Expression<Func<TEntity, bool>> ByAuthorFirstName(string firstName)
-        => entity => EF.Property<string>(entity, 
-            nameof(firstName).ToValidPropertyName()).Equals(firstName);
-
-    public Expression<Func<TEntity, bool>> ByAuthorLastName(string lastName)
-        => entity => EF.Property<string>(entity, 
-            nameof(lastName).ToValidPropertyName()).Equals(lastName);
-
-    public Expression<Func<TEntity, bool>> ByEntityId(Guid entityId)
-        => entity => EF.Property<Guid>(entity,
-            nameof(entityId).ToValidEntityIdPropertyName()).Equals(entityId);
+    public Expression<Func<TEntity, bool>> ByEntityId(Guid entityId, bool isEntityForeignKey = false)
+    {
+        return entity => EF.Property<Guid>(entity,
+            nameof(entityId).ToValidEntityIdPropertyName(isEntityForeignKey)).Equals(entityId);
+    }
 
     public async Task<TResult> ExecuteQueryAsync<TResult>(Func<IQueryable<TEntity>, Task<TResult>> queryFunc,
         Expression<Func<TEntity, bool>>? condition = null, bool isTracking = false)

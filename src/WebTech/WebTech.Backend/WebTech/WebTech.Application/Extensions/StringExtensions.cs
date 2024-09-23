@@ -8,10 +8,15 @@ public static class StringExtensions
             ? str
             : char.ToUpper(str[0]) + str[1..];
     }
-    public static string ToValidEntityIdPropertyName(this string str)
+    public static string ToValidEntityIdPropertyName(this string str, bool isEntityForeignKey = false)
     {
-        return string.IsNullOrEmpty(str)
-            ? str
-            : str.Replace("entity", "").Trim();
+        if (string.IsNullOrEmpty(str))
+        {
+            return str;
+        }
+
+        return isEntityForeignKey
+            ? str.ToValidPropertyName()
+            : str.Replace("entity", "", StringComparison.OrdinalIgnoreCase).Trim();
     }
 }
