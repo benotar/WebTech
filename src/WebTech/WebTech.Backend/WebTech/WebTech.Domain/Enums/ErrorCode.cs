@@ -14,6 +14,7 @@ public enum ErrorCode
     AuthorAlreadyExists,
     AuthorNotFound,
     AuthorDataIsTheSame,
+    BookDataIsTheSame,
     BookAlreadyExists,
     BookNotFound,
     Unknown

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebTech.Application.Common;
 using WebTech.Application.DTOs;
-using WebTech.Application.Extensions;
 using WebTech.Application.Interfaces.Persistence;
 using WebTech.Application.Interfaces.Providers;
 using WebTech.Application.Interfaces.Services;
@@ -56,10 +55,18 @@ public class AuthorService : IAuthorService
         return Result<Author>.Success(newAuthor);
     }
 
+    public async Task<Result<IEnumerable<Author>>> GetAuthorsAsync()
+    {
+        var authors = await _queryProvider.ExecuteQueryAsync(query => query.ToListAsync());
+
+        return authors.Count != 0
+            ? Result<IEnumerable<Author>>.Success(authors)
+            : Result<IEnumerable<Author>>.Error(ErrorCode.Unknown);
+    }
+
     public async Task<Result<Author>> GetCurrentAsync(Guid authorId)
     {
-        var existingAuthor = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
-            _queryProvider.ByEntityId(nameof(authorId), authorId));
+        var existingAuthor = await GetAuthorByIdAsync(authorId);
 
         return existingAuthor is not null
             ? Result<Author>.Success(existingAuthor)
@@ -68,19 +75,16 @@ public class AuthorService : IAuthorService
 
     public async Task<Result<Author>> UpdateAsync(Guid authorId, CreateOrUpdateAuthorDto createOrUpdateAuthorDto)
     {
-        var existingAuthor = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
-            _queryProvider.ByEntityId(nameof(authorId), authorId), isTracking: true);
-        
+        var existingAuthor = await GetAuthorByIdAsync(authorId, isTracking: true);
+
         if (existingAuthor is null)
         {
             return Result<Author>.Error(ErrorCode.AuthorNotFound);
         }
 
-        if (string.Equals(createOrUpdateAuthorDto.FirstName, existingAuthor.FirstName,
-                StringComparison.OrdinalIgnoreCase)
-            && string.Equals(createOrUpdateAuthorDto.LastName, existingAuthor.LastName,
-                StringComparison.OrdinalIgnoreCase)
-            && createOrUpdateAuthorDto.BirthDate == existingAuthor.BirthDate)
+        if (StringComparer.OrdinalIgnoreCase.Equals(createOrUpdateAuthorDto.FirstName, existingAuthor.FirstName) &&
+            StringComparer.OrdinalIgnoreCase.Equals(createOrUpdateAuthorDto.LastName, existingAuthor.LastName) &&
+            createOrUpdateAuthorDto.BirthDate == existingAuthor.BirthDate)
         {
             return Result<Author>.Error(ErrorCode.AuthorDataIsTheSame);
         }
@@ -97,8 +101,7 @@ public class AuthorService : IAuthorService
 
     public async Task<Result<None>> DeleteAsync(Guid authorId)
     {
-        var existingAuthor = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
-            _queryProvider.ByEntityId(nameof(authorId), authorId));
+        var existingAuthor = await GetAuthorByIdAsync(authorId);
 
         if (existingAuthor is null)
         {
@@ -115,12 +118,22 @@ public class AuthorService : IAuthorService
     public async Task<Result<Guid>> GetAuthorIdByAuthorNamesAsync(string firstName, string lastName)
     {
         var existingAuthorCondition = _queryProvider.ByAuthorFullName(firstName, lastName);
-        
+
         var authorId = await _queryProvider.ExecuteQueryAsync(query =>
             query.Where(existingAuthorCondition).Select(author => author.Id).FirstOrDefaultAsync());
 
         return authorId == Guid.Empty
             ? Result<Guid>.Error(ErrorCode.AuthorNotFound)
             : Result<Guid>.Success(authorId);
+    }
+
+    // Helper method
+    private async Task<Author> GetAuthorByIdAsync(Guid authorId, bool isTracking = false,
+        bool isEntityForeignKey = false)
+    {
+        var condition = _queryProvider.ByEntityId(nameof(authorId), authorId, isEntityForeignKey);
+
+        return await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
+            condition, isTracking);
     }
 }

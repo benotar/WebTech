@@ -15,16 +15,21 @@ public class BookService : IBookService
     private readonly IQueryProvider<Book> _queryProvider;
 
     private readonly IWebTechDbContext _dbContext;
-    
+
     private readonly IAuthorService _authorService;
 
-    public BookService(IQueryProvider<Book> queryProvider, IAuthorService authorService, IWebTechDbContext dbContext)
+    private readonly IDateTimeProvider _dateTimeProvider;
+
+    public BookService(IQueryProvider<Book> queryProvider, IAuthorService authorService, IWebTechDbContext dbContext,
+        IDateTimeProvider dateTimeProvider)
     {
         _queryProvider = queryProvider;
-        
+
         _authorService = authorService;
-        
+
         _dbContext = dbContext;
+
+        _dateTimeProvider = dateTimeProvider;
     }
 
 
@@ -41,15 +46,15 @@ public class BookService : IBookService
 
         var isBookExistsCondition =
             _queryProvider.ByPropertyName(nameof(createOrUpdateBookDto.Title), createOrUpdateBookDto.Title);
-        
+
         var isBookExists = await _queryProvider.ExecuteQueryAsync(query => query.AnyAsync(),
             isBookExistsCondition);
-        
+
         if (isBookExists)
         {
             return Result<Book>.Error(ErrorCode.BookAlreadyExists);
         }
-        
+
         var newBook = new Book
         {
             Title = createOrUpdateBookDto.Title,
@@ -61,8 +66,17 @@ public class BookService : IBookService
         await _dbContext.Books.AddAsync(newBook);
 
         await _dbContext.SaveChangesAsync();
-        
+
         return Result<Book>.Success(newBook);
+    }
+
+    public async Task<Result<IEnumerable<Book>>> GetBooksAsync()
+    {
+        var books = await _queryProvider.ExecuteQueryAsync(query => query.ToListAsync());
+
+        return books.Count > 0
+            ? Result<IEnumerable<Book>>.Success(books)
+            : Result<IEnumerable<Book>>.Error(ErrorCode.Unknown);
     }
 
     public async Task<Result<Book>> GetByIdAndAuthorAsync(Guid bookId, string authorFirstName, string authorLastName)
@@ -79,7 +93,7 @@ public class BookService : IBookService
 
         var existingBookCondition = _queryProvider.ByEntityId(nameof(bookId), bookId)
             .And(_queryProvider.ByEntityId(nameof(authorId), authorId, isEntityForeignKey: true));
-        
+
         var existingBook = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
             existingBookCondition);
 
@@ -88,13 +102,53 @@ public class BookService : IBookService
             : Result<Book>.Success(existingBook);
     }
 
-    public Task<Result<Book>> UpdateAsync(Guid bookId, CreateOrUpdateBookDto createOrUpdateBookDto)
+    public async Task<Result<Book>> UpdateAsync(Guid bookId, CreateOrUpdateBookDto createOrUpdateBookDto)
     {
-        throw new NotImplementedException();
+        var existingBook = await GetBookByIdAsync(bookId, isTracking: true);
+        
+        if (existingBook is null)
+        {
+            return Result<Book>.Error(ErrorCode.BookNotFound);
+        }
+
+        if (StringComparer.OrdinalIgnoreCase.Equals(existingBook.Title, createOrUpdateBookDto.Title) &&
+            StringComparer.OrdinalIgnoreCase.Equals(existingBook.Genre, createOrUpdateBookDto.Genre) &&
+            existingBook.PublicationYear == createOrUpdateBookDto.PublicationYear)
+        {
+            return Result<Book>.Error(ErrorCode.BookDataIsTheSame);
+        }
+
+        existingBook.Title = createOrUpdateBookDto.Title;
+        existingBook.Genre = createOrUpdateBookDto.Genre;
+        existingBook.PublicationYear = createOrUpdateBookDto.PublicationYear;
+        existingBook.UpdatedAt = _dateTimeProvider.UtcNow;
+
+        await _dbContext.SaveChangesAsync();
+
+        return Result<Book>.Success(existingBook);
     }
 
-    public Task<Result<None>> DeleteAsync(Guid bookId)
+    public async Task<Result<None>> DeleteAsync(Guid bookId)
     {
-        throw new NotImplementedException();
+        var existingBook = await GetBookByIdAsync(bookId);
+        
+        if (existingBook is null)
+        {
+            return Result<None>.Error(ErrorCode.BookNotFound);
+        }
+
+        _dbContext.Books.Remove(existingBook);
+
+        await _dbContext.SaveChangesAsync();
+
+        return Result<None>.Success();
+    }
+
+    private async Task<Book> GetBookByIdAsync(Guid bookId, bool isTracking = false, bool isEntityForeignKey = false)
+    {
+        var condition = _queryProvider.ByEntityId(nameof(bookId), bookId, isEntityForeignKey);
+
+        return await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
+            condition, isTracking);
     }
 }

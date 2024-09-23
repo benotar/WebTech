@@ -3,7 +3,7 @@ using WebTech.Application.Common.ValidationAttributes;
 
 namespace WebTech.WebApi.Models.Authors;
 
-public class CreateAuthorRequestModel
+public class CreateOrUpdateAuthorRequestModel
 {
     [Required]
     [MaxLength(88)]
