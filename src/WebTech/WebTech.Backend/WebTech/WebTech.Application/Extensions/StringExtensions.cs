@@ -1,4 +1,6 @@
-﻿namespace WebTech.Application.Extensions;
+﻿using System.Text;
+
+namespace WebTech.Application.Extensions;
 
 public static class StringExtensions
 {
@@ -8,15 +10,13 @@ public static class StringExtensions
             ? str
             : char.ToUpper(str[0]) + str[1..];
     }
-    public static string ToValidEntityIdPropertyName(this string str, bool isEntityForeignKey = false)
+    public static string ToValidEntityIdPropertyName(this string str)
     {
-        if (string.IsNullOrEmpty(str))
+        if (!str.Contains("Id") || string.IsNullOrEmpty(str))
         {
-            return str;
+            throw new ArgumentException("The provided string must contain 'Id'.", nameof(str));
         }
 
-        return isEntityForeignKey
-            ? str.ToValidPropertyName()
-            : str.Replace("entity", "", StringComparison.OrdinalIgnoreCase).Trim();
+        return "Id";
     }
 }

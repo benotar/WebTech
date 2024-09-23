@@ -59,7 +59,7 @@ public class AuthorService : IAuthorService
     public async Task<Result<Author>> GetCurrentAsync(Guid authorId)
     {
         var existingAuthor = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
-            _queryProvider.ByEntityId(authorId));
+            _queryProvider.ByEntityId(nameof(authorId), authorId));
 
         return existingAuthor is not null
             ? Result<Author>.Success(existingAuthor)
@@ -69,7 +69,7 @@ public class AuthorService : IAuthorService
     public async Task<Result<Author>> UpdateAsync(Guid authorId, CreateOrUpdateAuthorDto createOrUpdateAuthorDto)
     {
         var existingAuthor = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
-            _queryProvider.ByEntityId(authorId), isTracking: true);
+            _queryProvider.ByEntityId(nameof(authorId), authorId), isTracking: true);
         
         if (existingAuthor is null)
         {
@@ -98,7 +98,7 @@ public class AuthorService : IAuthorService
     public async Task<Result<None>> DeleteAsync(Guid authorId)
     {
         var existingAuthor = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
-            _queryProvider.ByEntityId(authorId));
+            _queryProvider.ByEntityId(nameof(authorId), authorId));
 
         if (existingAuthor is null)
         {
@@ -112,15 +112,15 @@ public class AuthorService : IAuthorService
         return Result<None>.Success();
     }
 
-    public async Task<Result<Author>> GetAuthorByNamesAsync(string firstName, string lastName)
+    public async Task<Result<Guid>> GetAuthorIdByAuthorNamesAsync(string firstName, string lastName)
     {
         var existingAuthorCondition = _queryProvider.ByAuthorFullName(firstName, lastName);
         
-        var existingAuthor = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
-            existingAuthorCondition);
+        var authorId = await _queryProvider.ExecuteQueryAsync(query =>
+            query.Where(existingAuthorCondition).Select(author => author.Id).FirstOrDefaultAsync());
 
-        return existingAuthor is null
-            ? Result<Author>.Error(ErrorCode.AuthorNotFound)
-            : Result<Author>.Success(existingAuthor);
+        return authorId == Guid.Empty
+            ? Result<Guid>.Error(ErrorCode.AuthorNotFound)
+            : Result<Guid>.Success(authorId);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using WebTech.Application.Extensions;
 using WebTech.Application.Interfaces.Persistence;
@@ -14,28 +15,34 @@ public class QueryProvider<TEntity> : IQueryProvider<TEntity> where TEntity : cl
     {
         _dbContext = dbContext;
     }
-    
-    public Expression<Func<TEntity, bool>> ByPropertyName(string propertyName, string propertyValue, bool isEntityNameBeginLower = false)
+
+    public Expression<Func<TEntity, bool>> ByPropertyName(string propertyName, string propertyValue,
+        bool isEntityNameBeginLower = false)
     {
         if (isEntityNameBeginLower)
         {
             propertyName = propertyName.ToValidPropertyName();
         }
-        
+
         return entity => EF.Property<string>(entity,
             propertyName).Equals(propertyValue);
     }
-    
+
     public Expression<Func<TEntity, bool>> ByAuthorFullName(string firstName, string lastName)
     {
         return entity => EF.Property<string>(entity, nameof(firstName).ToValidPropertyName()).Equals(firstName)
                          && EF.Property<string>(entity, nameof(lastName).ToValidPropertyName()).Equals(lastName);
     }
 
-    public Expression<Func<TEntity, bool>> ByEntityId(Guid entityId, bool isEntityForeignKey = false)
+    public Expression<Func<TEntity, bool>> ByEntityId(string nameEntityId, Guid entityId,
+        bool isEntityForeignKey = false)
     {
+        nameEntityId = isEntityForeignKey
+            ? nameEntityId.ToValidPropertyName()
+            : nameEntityId.ToValidEntityIdPropertyName();
+        
         return entity => EF.Property<Guid>(entity,
-            nameof(entityId).ToValidEntityIdPropertyName(isEntityForeignKey)).Equals(entityId);
+            nameEntityId).Equals(entityId);
     }
 
     public async Task<TResult> ExecuteQueryAsync<TResult>(Func<IQueryable<TEntity>, Task<TResult>> queryFunc,

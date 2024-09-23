@@ -39,7 +39,7 @@ public class UserService : IUserService
     public async Task<Result<User>> GetCurrentAsync(Guid userId)
     {
         var existingUser = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
-            _queryProvider.ByEntityId(userId));
+            _queryProvider.ByEntityId(nameof(userId), userId));
         
         return existingUser is not null
             ? Result<User>.Success(existingUser)

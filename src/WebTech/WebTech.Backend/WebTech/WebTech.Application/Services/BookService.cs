@@ -12,15 +12,15 @@ namespace WebTech.Application.Services;
 
 public class BookService : IBookService
 {
-    private readonly IQueryProvider<Book> _queryBookProvider;
+    private readonly IQueryProvider<Book> _queryProvider;
 
     private readonly IWebTechDbContext _dbContext;
     
     private readonly IAuthorService _authorService;
 
-    public BookService(IQueryProvider<Book> queryBookProvider, IAuthorService authorService, IWebTechDbContext dbContext)
+    public BookService(IQueryProvider<Book> queryProvider, IAuthorService authorService, IWebTechDbContext dbContext)
     {
-        _queryBookProvider = queryBookProvider;
+        _queryProvider = queryProvider;
         
         _authorService = authorService;
         
@@ -30,19 +30,19 @@ public class BookService : IBookService
 
     public async Task<Result<Book>> CreateAsync(CreateOrUpdateBookDto createOrUpdateBookDto)
     {
-        var existingAuthorResult = await _authorService.GetAuthorByNamesAsync(
+        var existingAuthorIdResult = await _authorService.GetAuthorIdByAuthorNamesAsync(
             createOrUpdateBookDto.AuthorFirstName,
             createOrUpdateBookDto.AuthorLastName);
 
-        if (!existingAuthorResult.IsSucceed)
+        if (!existingAuthorIdResult.IsSucceed)
         {
             return Result<Book>.Error(ErrorCode.AuthorNotFound);
         }
 
         var isBookExistsCondition =
-            _queryBookProvider.ByPropertyName(nameof(createOrUpdateBookDto.Title), createOrUpdateBookDto.Title);
+            _queryProvider.ByPropertyName(nameof(createOrUpdateBookDto.Title), createOrUpdateBookDto.Title);
         
-        var isBookExists = await _queryBookProvider.ExecuteQueryAsync(query => query.AnyAsync(),
+        var isBookExists = await _queryProvider.ExecuteQueryAsync(query => query.AnyAsync(),
             isBookExistsCondition);
         
         if (isBookExists)
@@ -55,7 +55,7 @@ public class BookService : IBookService
             Title = createOrUpdateBookDto.Title,
             Genre = createOrUpdateBookDto.Genre,
             PublicationYear = createOrUpdateBookDto.PublicationYear,
-            AuthorId = existingAuthorResult.Data.Id
+            AuthorId = existingAuthorIdResult.Data
         };
 
         await _dbContext.Books.AddAsync(newBook);
@@ -65,9 +65,27 @@ public class BookService : IBookService
         return Result<Book>.Success(newBook);
     }
 
-    public Task<Result<Book>> GetCurrentAsync(Guid bookId)
+    public async Task<Result<Book>> GetByIdAndAuthorAsync(Guid bookId, string authorFirstName, string authorLastName)
     {
-        throw new NotImplementedException();
+        var existingAuthorIdResult = await _authorService.GetAuthorIdByAuthorNamesAsync(
+            authorFirstName, authorLastName);
+
+        if (!existingAuthorIdResult.IsSucceed)
+        {
+            return Result<Book>.Error(ErrorCode.AuthorNotFound);
+        }
+
+        var authorId = existingAuthorIdResult.Data;
+
+        var existingBookCondition = _queryProvider.ByEntityId(nameof(bookId), bookId)
+            .And(_queryProvider.ByEntityId(nameof(authorId), authorId, isEntityForeignKey: true));
+        
+        var existingBook = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
+            existingBookCondition);
+
+        return existingBook is null
+            ? Result<Book>.Error(ErrorCode.BookNotFound)
+            : Result<Book>.Success(existingBook);
     }
 
     public Task<Result<Book>> UpdateAsync(Guid bookId, CreateOrUpdateBookDto createOrUpdateBookDto)

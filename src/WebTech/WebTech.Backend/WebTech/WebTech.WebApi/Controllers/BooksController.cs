@@ -18,9 +18,11 @@ public class BooksController : BaseController
     }
 
     [HttpGet("get")]
-    public async Task<IActionResult> Get()
+    public async Task<Result<Book>> Get (GetBookRequestModel getBookRequestModel)
     {
-        return Ok("Hello from api.bg-local.net");
+        return await _bookService.GetByIdAndAuthorAsync(getBookRequestModel.BookId,
+            getBookRequestModel.AuthorFirstName,
+            getBookRequestModel.AuthorLastName);
     }
 
     [HttpPost("create")]
@@ -34,7 +36,7 @@ public class BooksController : BaseController
             Title = createBookRequestModel.Title,
             Genre = createBookRequestModel.Genre
         };
-        
+
         return await _bookService.CreateAsync(request);
     }
 }

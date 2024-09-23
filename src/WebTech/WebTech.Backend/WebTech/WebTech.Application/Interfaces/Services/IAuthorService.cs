@@ -11,5 +11,5 @@ public interface IAuthorService
     Task<Result<Author>> UpdateAsync(Guid authorId, CreateOrUpdateAuthorDto createOrUpdateAuthorDto);
     Task<Result<None>> DeleteAsync(Guid authorId);
 
-    Task<Result<Author>> GetAuthorByNamesAsync(string firstName, string lastName);
+    Task<Result<Guid>> GetAuthorIdByAuthorNamesAsync(string firstName, string lastName);
 }
