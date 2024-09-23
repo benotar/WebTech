@@ -34,6 +34,9 @@ public class BooksController : BaseController
     }
 
     [HttpPost("create")]
+    [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status401Unauthorized)]
     public async Task<Result<Book>> Create(CreateOrUpdateBookRequestModel createOrUpdateBookRequestModel)
     {
         var request = new CreateOrUpdateBookDto
@@ -49,6 +52,9 @@ public class BooksController : BaseController
     }
     
     [HttpPut("update/{bookId:guid}")]
+    [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status401Unauthorized)]
     public async Task<Result<Book>> Update(Guid bookId, CreateOrUpdateBookRequestModel createOrUpdateBookRequestModel)
     {
         var request = new CreateOrUpdateBookDto
@@ -64,6 +70,9 @@ public class BooksController : BaseController
     }
 
     [HttpDelete("delete/{bookId:guid}")]
+    [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status401Unauthorized)]
     public async Task<Result<None>> Delete(Guid bookId)
     {
         return await _bookService.DeleteAsync(bookId);

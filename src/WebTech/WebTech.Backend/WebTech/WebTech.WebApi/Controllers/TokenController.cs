@@ -24,6 +24,8 @@ public class TokenController : BaseController
     }
 
     [HttpPost("refresh")]
+    [ProducesResponseType(typeof(Result<None>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<None>), StatusCodes.Status400BadRequest)]
     public async Task<Result<None>> Refresh()
     {
         var refreshToken = _cookieProvider.GetTokensFromCookies(HttpContext.Request).RefreshToken;

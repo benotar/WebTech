@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebTech.Application.Common;
 using WebTech.Application.DTOs;
@@ -47,6 +46,8 @@ public class UsersController : BaseController
 
 
     [HttpPost("register")]
+    [ProducesResponseType(typeof(Result<User>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<User>), StatusCodes.Status400BadRequest)]
     public async Task<Result<User>> Register(RegisterRequestModel registerRequestModel)
     {
         var createUser = new CreateUserDto
@@ -63,6 +64,8 @@ public class UsersController : BaseController
     }
 
     [HttpPost("login")]
+    [ProducesResponseType(typeof(Result<None>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<None>), StatusCodes.Status400BadRequest)]
     public async Task<Result<None>> Login(LoginRequestModel loginRequestModel)
     {
         var existingUserResult = await _userService.GetExistingUser(loginRequestModel.UserName, loginRequestModel.Password);
@@ -86,6 +89,8 @@ public class UsersController : BaseController
     }
 
     [HttpPost("logout")]
+    [ProducesResponseType(typeof(Result<None>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<None>), StatusCodes.Status400BadRequest)]
     public async Task<Result<None>> Logout()
     {
         var refreshToken = _cookiesProvider.GetTokensFromCookies(HttpContext.Request).RefreshToken;
