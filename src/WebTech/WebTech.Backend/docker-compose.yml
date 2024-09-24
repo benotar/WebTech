@@ -25,5 +25,23 @@ services:
     ports:
       - '6379:6379'
 
+  backend:
+    container_name: webTech
+    build:
+      context: ./WebTech
+      dockerfile: Dockerfile
+      args:
+        - POSTGRES_DB_USERNAME=arg_value
+        - POSTGRES_DB_PASSWORD=arg_value
+        - JWT_SECRET=arg_value
+    ports:
+      - '5000:80'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=DockerDevelopment
+    depends_on:
+      - postgres
+      - redis
+    restart: always
+
 volumes:
   db_data:
