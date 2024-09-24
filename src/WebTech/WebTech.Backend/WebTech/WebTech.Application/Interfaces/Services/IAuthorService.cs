@@ -8,10 +8,10 @@ public interface IAuthorService
 {
     Task<Result<Author>> CreateAsync(CreateOrUpdateAuthorDto createOrUpdateAuthorDto);
 
-    Task<Result<IEnumerable<Author>>> GetAuthorsAsync();
+    Task<Result<IEnumerable<Author>>> GetAsync();
     
-    Task<Result<Author>> GetCurrentAsync(Guid authorId);
     Task<Result<Author>> UpdateAsync(Guid authorId, CreateOrUpdateAuthorDto createOrUpdateAuthorDto);
+    
     Task<Result<None>> DeleteAsync(Guid authorId);
 
     Task<Result<Guid>> GetAuthorIdByAuthorNamesAsync(string firstName, string lastName);

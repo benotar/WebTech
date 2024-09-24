@@ -32,6 +32,7 @@ public class UsersController : BaseController
     }
 
     [HttpGet("get")]
+    [ProducesResponseType(typeof(Result<IEnumerable<User>>), StatusCodes.Status200OK)]
     public async Task<Result<IEnumerable<User>>> Get()
     {
         return await _userService.GetAsync();
@@ -39,6 +40,7 @@ public class UsersController : BaseController
     
     [Authorize]
     [HttpGet("me")]
+    [ProducesResponseType(typeof(Result<User>), StatusCodes.Status200OK)]
     public async Task<Result<User>> GetCurrent()
     {
         return await _userService.GetCurrentAsync(GetUserId());
@@ -47,7 +49,6 @@ public class UsersController : BaseController
 
     [HttpPost("register")]
     [ProducesResponseType(typeof(Result<User>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result<User>), StatusCodes.Status400BadRequest)]
     public async Task<Result<User>> Register(RegisterRequestModel registerRequestModel)
     {
         var createUser = new CreateUserDto
@@ -65,7 +66,6 @@ public class UsersController : BaseController
 
     [HttpPost("login")]
     [ProducesResponseType(typeof(Result<None>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result<None>), StatusCodes.Status400BadRequest)]
     public async Task<Result<None>> Login(LoginRequestModel loginRequestModel)
     {
         var existingUserResult = await _userService.GetExistingUser(loginRequestModel.UserName, loginRequestModel.Password);
@@ -90,7 +90,6 @@ public class UsersController : BaseController
 
     [HttpPost("logout")]
     [ProducesResponseType(typeof(Result<None>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result<None>), StatusCodes.Status400BadRequest)]
     public async Task<Result<None>> Logout()
     {
         var refreshToken = _cookiesProvider.GetTokensFromCookies(HttpContext.Request).RefreshToken;

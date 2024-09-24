@@ -20,25 +20,19 @@ public class BooksController : BaseController
     }
 
     [HttpGet("get-all")]
+    [ProducesResponseType(typeof(Result<IEnumerable<Book>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<IEnumerable<Book>>), StatusCodes.Status401Unauthorized)]
     public async Task<Result<IEnumerable<Book>>> Get()
     {
-        return await _bookService.GetBooksAsync();
+        return await _bookService.GetAsync();
     }
     
-    [HttpGet("get-book")]
-    public async Task<Result<Book>> GetBook(GetBookRequestModel getBookRequestModel)
-    {
-        return await _bookService.GetByIdAndAuthorAsync(getBookRequestModel.BookId,
-            getBookRequestModel.AuthorFirstName,
-            getBookRequestModel.AuthorLastName);
-    }
-
     [HttpPost("create")]
     [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status401Unauthorized)]
     public async Task<Result<Book>> Create(CreateOrUpdateBookRequestModel createOrUpdateBookRequestModel)
     {
+        
         var request = new CreateOrUpdateBookDto
         {
             AuthorFirstName = createOrUpdateBookRequestModel.AuthorFirstName,
@@ -53,7 +47,6 @@ public class BooksController : BaseController
     
     [HttpPut("update/{bookId:guid}")]
     [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status401Unauthorized)]
     public async Task<Result<Book>> Update(Guid bookId, CreateOrUpdateBookRequestModel createOrUpdateBookRequestModel)
     {
@@ -70,9 +63,8 @@ public class BooksController : BaseController
     }
 
     [HttpDelete("delete/{bookId:guid}")]
-    [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(Result<None>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<None>), StatusCodes.Status401Unauthorized)]
     public async Task<Result<None>> Delete(Guid bookId)
     {
         return await _bookService.DeleteAsync(bookId);

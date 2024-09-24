@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebTech.Application.Common;
 using WebTech.Application.DTOs;
-using WebTech.Application.Extensions;
 using WebTech.Application.Interfaces.Persistence;
 using WebTech.Application.Interfaces.Providers;
 using WebTech.Application.Interfaces.Services;
@@ -32,7 +31,6 @@ public class BookService : IBookService
         _dateTimeProvider = dateTimeProvider;
     }
 
-
     public async Task<Result<Book>> CreateAsync(CreateOrUpdateBookDto createOrUpdateBookDto)
     {
         var existingAuthorIdResult = await _authorService.GetAuthorIdByAuthorNamesAsync(
@@ -45,10 +43,11 @@ public class BookService : IBookService
         }
 
         var isBookExistsCondition =
-            _queryProvider.ByPropertyName(nameof(createOrUpdateBookDto.Title), createOrUpdateBookDto.Title);
+            _queryProvider.ByPropertyName(nameof(createOrUpdateBookDto.Title), 
+                createOrUpdateBookDto.Title);
 
-        var isBookExists = await _queryProvider.ExecuteQueryAsync(query => query.AnyAsync(),
-            isBookExistsCondition);
+        var isBookExists = await _queryProvider.ExecuteQueryAsync(query =>
+            query.AnyAsync(), isBookExistsCondition);
 
         if (isBookExists)
         {
@@ -70,38 +69,14 @@ public class BookService : IBookService
         return Result<Book>.Success(newBook);
     }
 
-    public async Task<Result<IEnumerable<Book>>> GetBooksAsync()
+    public async Task<Result<IEnumerable<Book>>> GetAsync()
     {
-        var books = await _queryProvider.ExecuteQueryAsync(query => query.ToListAsync());
+        var books = await _queryProvider.ExecuteQueryAsync(query =>
+            query.ToListAsync());
 
-        return books.Count > 0
-            ? Result<IEnumerable<Book>>.Success(books)
-            : Result<IEnumerable<Book>>.Error(ErrorCode.UnknownError);
+        return Result<IEnumerable<Book>>.Success(books);
     }
-
-    public async Task<Result<Book>> GetByIdAndAuthorAsync(Guid bookId, string authorFirstName, string authorLastName)
-    {
-        var existingAuthorIdResult = await _authorService.GetAuthorIdByAuthorNamesAsync(
-            authorFirstName, authorLastName);
-
-        if (!existingAuthorIdResult.IsSucceed)
-        {
-            return Result<Book>.Error(ErrorCode.AuthorNotFound);
-        }
-
-        var authorId = existingAuthorIdResult.Data;
-
-        var existingBookCondition = _queryProvider.ByEntityId(nameof(bookId), bookId)
-            .And(_queryProvider.ByEntityId(nameof(authorId), authorId, isEntityForeignKey: true));
-
-        var existingBook = await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
-            existingBookCondition);
-
-        return existingBook is null
-            ? Result<Book>.Error(ErrorCode.BookNotFound)
-            : Result<Book>.Success(existingBook);
-    }
-
+    
     public async Task<Result<Book>> UpdateAsync(Guid bookId, CreateOrUpdateBookDto createOrUpdateBookDto)
     {
         var existingBook = await GetBookByIdAsync(bookId, isTracking: true);
@@ -144,9 +119,10 @@ public class BookService : IBookService
         return Result<None>.Success();
     }
 
-    private async Task<Book> GetBookByIdAsync(Guid bookId, bool isTracking = false, bool isEntityForeignKey = false)
+    private async Task<Book?> GetBookByIdAsync(Guid bookId, bool isTracking = false, bool isEntityForeignKey = false)
     {
-        var condition = _queryProvider.ByEntityId(nameof(bookId), bookId, isEntityForeignKey);
+        var condition = _queryProvider.ByEntityId(nameof(bookId),
+            bookId, isEntityForeignKey);
 
         return await _queryProvider.ExecuteQueryAsync(query => query.FirstOrDefaultAsync(),
             condition, isTracking);

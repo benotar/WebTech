@@ -20,12 +20,16 @@ public class AuthorsController: BaseController
     }
 
     [HttpGet("get-all")]
+    [ProducesResponseType(typeof(Result<IEnumerable<Author>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<IEnumerable<Author>>), StatusCodes.Status401Unauthorized)]
     public async Task<Result<IEnumerable<Author>>> Get()
     {
-        return await _authorService.GetAuthorsAsync();
+        return await _authorService.GetAsync();
     }
 
     [HttpPost("create")]
+    [ProducesResponseType(typeof(Result<Author>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<Author>), StatusCodes.Status401Unauthorized)]
     public async Task<Result<Author>> Create(CreateOrUpdateAuthorRequestModel createOrUpdateAuthorRequestModel)
     {
         var request = new CreateOrUpdateAuthorDto
@@ -39,6 +43,8 @@ public class AuthorsController: BaseController
     }
 
     [HttpPut("update/{authorId:guid}")]
+    [ProducesResponseType(typeof(Result<Author>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<Author>), StatusCodes.Status401Unauthorized)]
     public async Task<Result<Author>> Update(Guid authorId, CreateOrUpdateAuthorRequestModel createOrUpdateAuthorRequestModel)
     {
         var request = new CreateOrUpdateAuthorDto
@@ -52,6 +58,8 @@ public class AuthorsController: BaseController
     }
 
     [HttpDelete("delete/{authorId:guid}")]
+    [ProducesResponseType(typeof(Result<None>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<None>), StatusCodes.Status401Unauthorized)]
     public async Task<Result<None>> Delete(Guid authorId)
     {
         return await _authorService.DeleteAsync(authorId);

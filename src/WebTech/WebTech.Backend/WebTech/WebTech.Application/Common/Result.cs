@@ -7,7 +7,7 @@ public class Result<TData>
     public TData? Data { get; private set; }
 
     public ErrorCode? ErrorCode { get; private set; }
-
+    
     public bool IsSucceed => ErrorCode is null;
 
     public static Result<TData> Success(TData data = default)

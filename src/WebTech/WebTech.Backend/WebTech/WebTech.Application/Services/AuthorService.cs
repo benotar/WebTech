@@ -55,24 +55,13 @@ public class AuthorService : IAuthorService
         return Result<Author>.Success(newAuthor);
     }
 
-    public async Task<Result<IEnumerable<Author>>> GetAuthorsAsync()
+    public async Task<Result<IEnumerable<Author>>> GetAsync()
     {
         var authors = await _queryProvider.ExecuteQueryAsync(query => query.ToListAsync());
 
-        return authors.Count != 0
-            ? Result<IEnumerable<Author>>.Success(authors)
-            : Result<IEnumerable<Author>>.Error(ErrorCode.UnknownError);
+        return Result<IEnumerable<Author>>.Success(authors);
     }
-
-    public async Task<Result<Author>> GetCurrentAsync(Guid authorId)
-    {
-        var existingAuthor = await GetAuthorByIdAsync(authorId);
-
-        return existingAuthor is not null
-            ? Result<Author>.Success(existingAuthor)
-            : Result<Author>.Error(ErrorCode.AuthorNotFound);
-    }
-
+    
     public async Task<Result<Author>> UpdateAsync(Guid authorId, CreateOrUpdateAuthorDto createOrUpdateAuthorDto)
     {
         var existingAuthor = await GetAuthorByIdAsync(authorId, isTracking: true);
