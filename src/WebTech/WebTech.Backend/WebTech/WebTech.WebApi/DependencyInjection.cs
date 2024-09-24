@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using WebTech.Application.Configurations;
 
+
 namespace WebTech.WebApi;
 
 public static class DependencyInjection
@@ -29,6 +30,11 @@ public static class DependencyInjection
         
         builder.Services.Configure<CookiesConfiguration>(
             builder.Configuration.GetSection(CookiesConfiguration.ConfigurationKey));
+        builder.Services.AddSingleton(resolver =>
+            resolver.GetRequiredService<IOptions<CookiesConfiguration>>().Value);
+
+        builder.Services.Configure<CorsConfiguration>(
+            builder.Configuration.GetSection(CorsConfiguration.ConfigurationKey));
         builder.Services.AddSingleton(resolver =>
             resolver.GetRequiredService<IOptions<CookiesConfiguration>>().Value);
     }

@@ -1,5 +1,6 @@
 using WebTech.Application;
 using WebTech.Application.Common.Converters;
+using WebTech.Application.Configurations;
 using WebTech.Domain.Enums;
 using WebTech.Persistence;
 using WebTech.WebApi;
@@ -7,8 +8,12 @@ using WebTech.WebApi.Middleware;
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
+ 
+var corsConfig = new CorsConfiguration();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.Bind(CorsConfiguration.ConfigurationKey, corsConfig);
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -22,6 +27,18 @@ builder.Services.AddApplication()
     .AddPersistence(builder.Configuration)
     .AddRedis(builder.Configuration);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(corsConfig.PolicyName, policy =>
+    {
+        policy
+            .WithOrigins(corsConfig.AllowedOrigins.ToArray())
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 var app = builder.Build();
 
 app.UseCustomExceptionHandler();
@@ -29,7 +46,10 @@ app.UseCustomExceptionHandler();
 app.UseHostFilteringMiddleware();
 
 app.UseAuthentication();
+
 app.UseAuthorization();
+
+app.UseCors(corsConfig.PolicyName);
 
 app.MapControllers();
 
