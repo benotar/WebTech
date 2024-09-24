@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WebTech.Application.Common;
 using WebTech.Application.DTOs;
 using WebTech.Application.Interfaces.Persistence;

@@ -11,7 +11,9 @@ namespace WebTech.Application.Providers;
 public class JwtProvider : IJwtProvider
 {
     private readonly JwtConfiguration _jwtConfig;
+    
     private IDateTimeProvider _dateTimeProvider;
+    
     private readonly TokenValidationParameters _validationParameters;
 
     public JwtProvider(JwtConfiguration jwtConfig, IDateTimeProvider dateTimeProvider, TokenValidationParameters validationParameters)

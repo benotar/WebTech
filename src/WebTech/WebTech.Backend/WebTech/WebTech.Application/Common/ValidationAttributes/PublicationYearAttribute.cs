@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WebTech.Application.Interfaces.Providers;
 
 namespace WebTech.Application.Common.ValidationAttributes;
 

@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace WebTech.Application.Extensions;
+﻿namespace WebTech.Application.Extensions;
 
 public static class StringExtensions
 {

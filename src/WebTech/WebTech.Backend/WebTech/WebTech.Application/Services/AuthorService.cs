@@ -117,7 +117,7 @@ public class AuthorService : IAuthorService
     }
 
     // Helper method
-    private async Task<Author> GetAuthorByIdAsync(Guid authorId, bool isTracking = false,
+    private async Task<Author?> GetAuthorByIdAsync(Guid authorId, bool isTracking = false,
         bool isEntityForeignKey = false)
     {
         var condition = _queryProvider.ByEntityId(nameof(authorId), authorId, isEntityForeignKey);
