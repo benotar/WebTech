@@ -6,7 +6,7 @@ export default function RootPage() {
     return (
         <>
             <Header/>
-            <Outlet/>
+            <main><Outlet/></main>
         </>
     );
 }
