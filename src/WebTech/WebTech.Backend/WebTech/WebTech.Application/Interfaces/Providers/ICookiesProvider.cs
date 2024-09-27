@@ -5,11 +5,13 @@ namespace WebTech.Application.Interfaces.Providers;
 
 public interface ICookiesProvider
 {
-    void AddTokensCookiesToResponse(HttpResponse response, string accessToken, string refreshToken);
+    void AddRefreshTokenCookiesToResponse(HttpResponse response,string refreshToken);
+
     
     void AddFingerprintCookiesToResponse(HttpResponse response, string fingerprint);
     
-    TokensDto GetTokensFromCookies(HttpRequest request);
+    string? GetRefreshTokenFromCookies(HttpRequest request);
+
     
     string? GetFingerprintFromCookies(HttpRequest request);
     

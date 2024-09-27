@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using WebTech.Application.Configurations;
-using WebTech.Application.DTOs;
 using WebTech.Application.Interfaces.Providers;
 
 namespace WebTech.Application.Providers;
@@ -27,19 +26,9 @@ public class CookiesProvider : ICookiesProvider
 
         _cookiesConfiguration = cookiesConfiguration;
     }
-
-    public void AddTokensCookiesToResponse(HttpResponse response, string accessToken, string refreshToken)
+    
+    public void AddRefreshTokenCookiesToResponse(HttpResponse response, string refreshToken)
     {
-        response.Cookies.Append(_cookiesConfiguration.AccessTokenCookiesKey, accessToken,
-            new CookieOptions
-            {
-                Secure = false,
-                HttpOnly = true,
-                SameSite = SameSiteMode.Lax,
-                Expires = new DateTimeOffset(
-                    _dateTimeProvider.UtcNow.AddMinutes(_jwtConfiguration.AccessExpirationMinutes))
-            });
-
         response.Cookies.Append(_cookiesConfiguration.RefreshTokenCookiesKey, refreshToken,
             CreateCookieOptionsWithDays(_jwtConfiguration.RefreshExpirationDays));
     }
@@ -50,13 +39,11 @@ public class CookiesProvider : ICookiesProvider
             CreateCookieOptionsWithDays(_refreshTokenSessionConfiguration.ExpirationDays));
     }
 
-    public TokensDto GetTokensFromCookies(HttpRequest request)
+    public string? GetRefreshTokenFromCookies(HttpRequest request)
     {
-        request.Cookies.TryGetValue(_cookiesConfiguration.AccessTokenCookiesKey, out var accessToken);
-
         request.Cookies.TryGetValue(_cookiesConfiguration.RefreshTokenCookiesKey, out var refreshToken);
 
-        return new TokensDto { AccessToken = accessToken, RefreshToken = refreshToken };
+        return refreshToken;
     }
 
     public string? GetFingerprintFromCookies(HttpRequest request)
@@ -68,8 +55,6 @@ public class CookiesProvider : ICookiesProvider
 
     public void DeleteCookiesFromResponse(HttpResponse response)
     {
-        response.Cookies.Delete(_cookiesConfiguration.AccessTokenCookiesKey);
-        
         response.Cookies.Delete(_cookiesConfiguration.RefreshTokenCookiesKey);
         
         response.Cookies.Delete(_cookiesConfiguration.FingerprintCookiesKey);

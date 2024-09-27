@@ -41,6 +41,7 @@ public class UsersController : BaseController
     [Authorize]
     [HttpGet("me")]
     [ProducesResponseType(typeof(Result<User>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<User>), StatusCodes.Status401Unauthorized)]
     public async Task<Result<User>> GetCurrent()
     {
         return await _userService.GetCurrentAsync(GetUserId());
@@ -65,14 +66,14 @@ public class UsersController : BaseController
     }
 
     [HttpPost("login")]
-    [ProducesResponseType(typeof(Result<None>), StatusCodes.Status200OK)]
-    public async Task<Result<None>> Login(LoginRequestModel loginRequestModel)
+    [ProducesResponseType(typeof(Result<string>), StatusCodes.Status200OK)]
+    public async Task<Result<string>> Login(LoginRequestModel loginRequestModel)
     {
         var existingUserResult = await _userService.GetExistingUser(loginRequestModel.UserName, loginRequestModel.Password);
         
         if (!existingUserResult.IsSucceed)
         {
-            return Result<None>.Error(existingUserResult.ErrorCode);
+            return Result<string>.Error(existingUserResult.ErrorCode);
         }
 
         var user = existingUserResult.Data;
@@ -82,18 +83,18 @@ public class UsersController : BaseController
 
         await _refreshTokenSessionService.CreateOrUpdateAsync(user.Id, loginRequestModel.Fingerprint, refreshToken);
         
-        _cookiesProvider.AddTokensCookiesToResponse(HttpContext.Response,accessToken, refreshToken);
+        _cookiesProvider.AddRefreshTokenCookiesToResponse(HttpContext.Response, refreshToken);
         _cookiesProvider.AddFingerprintCookiesToResponse(HttpContext.Response, loginRequestModel.Fingerprint);
         
-        return Result<None>.Success();
+        return Result<string>.Success(accessToken);
     }
 
     [HttpPost("logout")]
     [ProducesResponseType(typeof(Result<None>), StatusCodes.Status200OK)]
     public async Task<Result<None>> Logout()
     {
-        var refreshToken = _cookiesProvider.GetTokensFromCookies(HttpContext.Request).RefreshToken;
-
+        var refreshToken = _cookiesProvider.GetRefreshTokenFromCookies(HttpContext.Request);
+        
         if (refreshToken is null)
         {
             return Result<None>.Error(ErrorCode.RefreshCookieNotFound);

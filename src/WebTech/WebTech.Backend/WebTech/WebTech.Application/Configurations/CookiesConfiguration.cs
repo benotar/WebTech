@@ -4,8 +4,6 @@ public class CookiesConfiguration
 {
     public static readonly string ConfigurationKey = "Cookies";
     
-    public string AccessTokenCookiesKey { get; set; }
-    
     public string RefreshTokenCookiesKey { get; set; }
     
     public string FingerprintCookiesKey { get; set; }
