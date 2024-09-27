@@ -6,7 +6,7 @@ export interface IAuthState {
     errorCode : string | null;
     token: string | null;
 
-    login: (params: ILoginRequest) => Promise<string>;
+    login: (params: ILoginRequest) => Promise<string | null>;
     logout: () => Promise<void>;
     refresh: () => Promise<string>;
 }

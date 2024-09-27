@@ -9,15 +9,14 @@ import {IRegisterRequest} from "../interfaces/models/request/IRegisterRequest.ts
 
 export default class AuthService {
 
-    static async login(userName: string, password: string, fingerprint: string): Promise<AxiosResponse<IServerResponsePayload<string>>> {
+    static async login(params: ILoginRequest): Promise<AxiosResponse<IServerResponsePayload<string>>> {
 
-        const loginRequest: ILoginRequest = {
-            userName,
-            password,
-            fingerprint
-        };
 
-        return localComApi.post<IServerResponsePayload<string>>(ENDPOINTS.USERS.LOGIN, loginRequest);
+        return await localComApi.post<IServerResponsePayload<string>>(ENDPOINTS.USERS.LOGIN, {
+            userName: params.userName,
+            password: params.password,
+            fingerprint: params.fingerprint
+        });
     }
 
     static async register(userName: string, password: string, firstName: string, lastName: string, birthDate: string, address: string)
@@ -32,16 +31,16 @@ export default class AuthService {
             address
         };
 
-        return localComApi.post<IServerResponsePayload<IUser>>(ENDPOINTS.USERS.REGISTER, registerRequest);
+        return await localComApi.post<IServerResponsePayload<IUser>>(ENDPOINTS.USERS.REGISTER, registerRequest);
     }
 
     static async logout()
         : Promise<AxiosResponse<IServerResponsePayload<unknown>>> {
 
-        return localComApi.post<IServerResponsePayload<IUser>>(ENDPOINTS.USERS.LOGOUT);
+        return await localComApi.post<IServerResponsePayload<IUser>>(ENDPOINTS.USERS.LOGOUT);
     }
 
     static async refresh(): Promise<AxiosResponse<IServerResponsePayload<string>>> {
-        return localComApi.post<IServerResponsePayload<string>>(ENDPOINTS.REFRESH);
+        return await localComApi.post<IServerResponsePayload<string>>(ENDPOINTS.REFRESH);
     }
 }

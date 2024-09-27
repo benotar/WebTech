@@ -9,7 +9,7 @@ const LoginForm: FC = () => {
     const [password, setPassword] = useState('');
     const [fingerprint, setFingerprint] = useState('');
 
-    const hanldeLogin = async () => {
+    const handleLogin = async () => {
         await login({
            userName: userName,
            password: password,
@@ -38,7 +38,7 @@ const LoginForm: FC = () => {
                 placeholder="Fingerprint"
             />
 
-            <button onClick={hanldeLogin}>Login</button>
+            <button onClick={handleLogin}>Login</button>
 
             <h3>Is Authenticated: {isAuthenticated ? 'Yes' : 'No'}</h3>
             <h3>Error code: {errorCode ? errorCode : 'No'}</h3>

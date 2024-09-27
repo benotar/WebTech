@@ -10,22 +10,35 @@ export const useAuthStore = create<IAuthState>()(persist((set) => ({
     errorCode: null,
     token: null,
 
-    login: async (params: ILoginRequest) : Promise<string> => {
+    login: async (params: ILoginRequest): Promise<string | null> => {
+
         console.log('login');
 
         set({isLoading: true});
 
-        const response = await AuthService.login(params.userName, params.password, params.fingerprint);
+        try {
+            const response = await AuthService.login(params);
 
-        set({
-            isAuthenticated: response.data.isSucceed,
-            token: response.data.data,
-            errorCode: response.data.errorCode
-        });
+            set({
+                isAuthenticated: response.data.isSucceed,
+                token: response.data.data,
+                errorCode: response.data.errorCode
+            });
 
-        set({isLoading: false});
+            return response.data.data;
+        }catch(error){
+            console.error('Login error:', error);
 
-        return response.data.data;
+            set({
+                isAuthenticated: false,
+                errorCode: 'Login failed', // або можна витягнути код помилки з `error.response`
+            });
+
+            return null;
+        }finally {
+            set({isLoading: false});
+
+        }
     },
 
     logout: async (): Promise<void> => {

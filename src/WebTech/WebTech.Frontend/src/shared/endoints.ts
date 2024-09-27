@@ -3,10 +3,10 @@ export const LOCAL_NET_API_URL: string = 'http://api.bg-local.net:5000';
 
 export const ENDPOINTS = {
     USERS: {
-        REGISTER: `${LOCAL_COM_API_URL}/register`,
-        LOGIN: `${LOCAL_COM_API_URL}/login`,
-        LOGOUT: `${LOCAL_COM_API_URL}/logout`,
-        ME: `${LOCAL_COM_API_URL}/me`,
+        REGISTER: `${LOCAL_COM_API_URL}/users/register`,
+        LOGIN: `${LOCAL_COM_API_URL}/users/login`,
+        LOGOUT: `${LOCAL_COM_API_URL}/users/logout`,
+        ME: `${LOCAL_COM_API_URL}/users/me`,
     },
     REFRESH:  `${LOCAL_COM_API_URL}/refresh`,
     AUTHORS: {

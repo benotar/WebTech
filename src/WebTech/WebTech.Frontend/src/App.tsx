@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage/HomePage.tsx";
 import AuthorsPage from "./pages/AuthorsPage/AuthorsPage.tsx";
 import BooksPage from "./pages/BooksPage/BooksPage.tsx";
 import LoginForm from "./components/LoginForm/LoginForm.tsx";
+import Logout from "./components/Logout/Logout.tsx";
 
 export default function App() {
     return (
@@ -14,7 +15,7 @@ export default function App() {
                     <Route path='authors' element={<AuthorsPage/>}/>
                     <Route path='books' element={<BooksPage/>}/>
                     <Route path='login' element={<LoginForm/>}/>
-
+                    <Route path='logout' element={<Logout/>}/>
                 </Route>
             </Routes>
         </>
