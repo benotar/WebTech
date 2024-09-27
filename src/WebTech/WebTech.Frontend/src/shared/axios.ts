@@ -1,4 +1,4 @@
-import AxiosInstance = Axios.AxiosInstance;
+import axios, {AxiosInstance} from "axios";
 import {LOCAL_COM_API_URL, LOCAL_NET_API_URL}    from "./endoints.ts";
 
 export const localComApi : AxiosInstance = axios.create({
