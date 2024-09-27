@@ -3,12 +3,14 @@ import {persist, createJSONStorage} from 'zustand/middleware'
 import {IAuthState} from "../interfaces/store/IAuthState.ts";
 import {ILoginRequest} from "../interfaces/models/request/ILoginRequest.ts";
 import AuthService from "../services/AuthService.ts";
+import UserService from "../services/UserService.ts";
 
 export const useAuthStore = create<IAuthState>()(persist((set) => ({
     isAuthenticated: false,
     isLoading: false,
     errorCode: null,
     token: null,
+    user: null,
 
     login: async (params: ILoginRequest): Promise<string | null> => {
 
@@ -24,6 +26,10 @@ export const useAuthStore = create<IAuthState>()(persist((set) => ({
                 token: response.data.data,
                 errorCode: response.data.errorCode
             });
+
+            const getUserResponse = await UserService.GetMe();
+
+            set({user: getUserResponse.data.data});
 
             return response.data.data;
         }catch(error){
@@ -48,12 +54,16 @@ export const useAuthStore = create<IAuthState>()(persist((set) => ({
 
         await AuthService.logout();
 
-        set({isAuthenticated: false});
+        set({isAuthenticated: false,
+        errorCode: null,
+        token: null,
+        user:null});
 
         set({isLoading: false});
+
     },
 
-    refresh: async (): Promise<string> => {
+    refresh: async (): Promise<void> => {
         console.log('refresh');
 
         set({isLoading: true});
@@ -67,8 +77,6 @@ export const useAuthStore = create<IAuthState>()(persist((set) => ({
         });
 
         set({isLoading: false});
-
-        return response.data.data;
     }
 
 }), {

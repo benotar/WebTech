@@ -1,6 +1,6 @@
 import  { AxiosResponse } from 'axios';
 import IUser from "../interfaces/entities/IUser.ts";
-import {localComApi} from "../shared/axios.ts";
+import {localComApi} from "../shared/localComApi.ts";
 import {ENDPOINTS} from "../shared/endoints.ts";
 import IServerResponsePayload from "../interfaces/models/response/IServerResponsePayload.ts";
 
@@ -9,14 +9,8 @@ import IServerResponsePayload from "../interfaces/models/response/IServerRespons
 
 export default class UserService {
 
+    static async GetMe() : Promise<AxiosResponse<IServerResponsePayload<IUser>>>{
 
-
-    static async GetMe(token:string | null) : Promise<AxiosResponse<IServerResponsePayload<IUser>>>{
-
-        return localComApi.get<IServerResponsePayload<IUser>>(ENDPOINTS.USERS.ME, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        return localComApi.get<IServerResponsePayload<IUser>>(ENDPOINTS.USERS.ME);
     }
 };
