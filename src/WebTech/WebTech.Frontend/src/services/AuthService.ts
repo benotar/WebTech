@@ -1,5 +1,5 @@
 import {localComApi} from "../shared/axios.ts";
-import  { AxiosResponse } from 'axios';
+import {AxiosResponse} from 'axios';
 import IServerResponsePayload from "../interfaces/models/response/IServerResponsePayload.ts";
 import {ENDPOINTS} from "../shared/endoints.ts";
 import {ILoginRequest} from "../interfaces/models/request/ILoginRequest.ts";
@@ -39,5 +39,9 @@ export default class AuthService {
         : Promise<AxiosResponse<IServerResponsePayload<unknown>>> {
 
         return localComApi.post<IServerResponsePayload<IUser>>(ENDPOINTS.USERS.LOGOUT);
+    }
+
+    static async refresh(): Promise<AxiosResponse<IServerResponsePayload<string>>> {
+        return localComApi.post<IServerResponsePayload<string>>(ENDPOINTS.REFRESH);
     }
 }

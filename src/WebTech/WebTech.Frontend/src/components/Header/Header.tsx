@@ -9,6 +9,7 @@ export default function Header() {
                 <ul className={classes.navbarNav}>
                     <Link to='/authors' className={classes.navItem}>Authors</Link>
                     <Link to='/books' className={classes.navItem}>Books</Link>
+                    <Link to='/login' className={classes.navItem}>Login</Link>
                 </ul>
             </nav>
         </header>

@@ -3,6 +3,7 @@ import RootPage from "./pages/RootPage/RootPage.tsx";
 import HomePage from "./pages/HomePage/HomePage.tsx";
 import AuthorsPage from "./pages/AuthorsPage/AuthorsPage.tsx";
 import BooksPage from "./pages/BooksPage/BooksPage.tsx";
+import LoginForm from "./components/LoginForm/LoginForm.tsx";
 
 export default function App() {
     return (
@@ -12,6 +13,7 @@ export default function App() {
                     <Route index element={<HomePage/>}/>
                     <Route path='authors' element={<AuthorsPage/>}/>
                     <Route path='books' element={<BooksPage/>}/>
+                    <Route path='login' element={<LoginForm/>}/>
 
                 </Route>
             </Routes>
