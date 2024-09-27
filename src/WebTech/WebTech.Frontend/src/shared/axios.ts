@@ -1,5 +1,6 @@
 import axios, {AxiosInstance} from "axios";
 import {LOCAL_COM_API_URL, LOCAL_NET_API_URL}    from "./endoints.ts";
+import {useAuthStore} from "../store/store.ts";
 
 export const localComApi : AxiosInstance = axios.create({
     baseURL: LOCAL_COM_API_URL,
@@ -12,7 +13,13 @@ export const localNetApi : AxiosInstance = axios.create({
 });
 
 localNetApi.interceptors.request.use((request) => {
-    request.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
+
+
+    const { token } = useAuthStore();
+
+    if (token) {
+        request.headers.Authorization = `Bearer ${token}`;
+    }
 
     console.log('[INTERCEPTOR] REQUEST');
     console.log(request);

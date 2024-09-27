@@ -18,6 +18,7 @@ export default function Header() {
                         <>
                             <Link to='/authors' className={classes.navItem}>Authors</Link>
                             <Link to='/books' className={classes.navItem}>Books</Link>
+                            <Link to='/me' className={classes.navItem}>About me</Link>
                             <Link to='/logout' className={classes.navItem}>Logout</Link>
                         </>
                     ) : (
