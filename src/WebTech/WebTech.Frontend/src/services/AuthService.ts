@@ -1,4 +1,4 @@
-import {localComApi} from "../shared/localComApi.ts";
+import localComApi from "../shared/localComApi.ts";
 import {AxiosResponse} from 'axios';
 import IServerResponsePayload from "../interfaces/models/response/IServerResponsePayload.ts";
 import {ENDPOINTS} from "../shared/endoints.ts";

@@ -1,6 +1,7 @@
 import axios, {AxiosInstance} from "axios";
 import {LOCAL_COM_API_URL} from "./endoints.ts";
 import {useAuthStore} from "../store/store.ts";
+import localNetApi from "./localNetApi.ts";
 
 export const localComApi: AxiosInstance = axios.create({
     baseURL: LOCAL_COM_API_URL,
@@ -21,33 +22,40 @@ localComApi.interceptors.request.use((request) => {
     return request;
 })
 
-localComApi.interceptors.request.use(response => {
-    return response;
-}, async error => {
+localComApi.interceptors.request.use(
+    (config) => {
+        console.log('[INTERCEPTOR] RESPONSE SUCCESS');
+        console.log(config);
 
-    console.error('[INTERCEPTOR] localComApi RESPONSE ERROR');
-    console.error(error);
+        return config;
+    },
+    async (error) => {
+        console.log('[INTERCEPTOR] localNetApi RESPONSE ERROR');
+        console.error(error);
 
+        const originalRequest = error.config;
 
-    const originalRequest = error.config;
+        if(error.response.status == 401 && error.config && !error.config._isRetry) {
 
-    if (error.response.status == 401 && originalRequest && !originalRequest._isRetry) {
+            originalRequest._isRetry = true;
 
-        try {
+            try {
+                const {isAuthenticated, refresh} = useAuthStore.getState();
 
-            const {isAuthenticated, refresh} = useAuthStore.getState();
+                console.log('STATUS 401, refreshing...');
 
-            console.log('Status 401, refreshing...');
+                await refresh();
 
-            await refresh();
+                console.log('REFRESHED, AUTHENTICATED: ' + isAuthenticated)
 
-            console.log('REFRESHED, AUTHENTICATED: ' + isAuthenticated);
-
-            return localComApi.request(originalRequest);
-        } catch (e) {
-            console.log('Not authorized');
+                return localNetApi.request(originalRequest);
+            } catch(e) {
+                console.log(`Authorization failed with error - ${e}`);
+            }
         }
 
+        throw error;
     }
-    throw error;
-})
+);
+
+export default localComApi;

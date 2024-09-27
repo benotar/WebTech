@@ -21,49 +21,40 @@ localNetApi.interceptors.request.use((request) => {
     return request;
 });
 
+localNetApi.interceptors.request.use(
+    (config) => {
+        console.log('[INTERCEPTOR] RESPONSE SUCCESS');
+        console.log(config);
 
-localNetApi.interceptors.request.use((request) => {
+        return config;
+    },
+    async (error) => {
+        console.log('[INTERCEPTOR] localNetApi RESPONSE ERROR');
+        console.error(error);
 
-    const {token} = useAuthStore.getState();
+        const originalRequest = error.config;
 
-    if (token) {
-        request.headers.Authorization = `Bearer ${token}`;
-    }
+        if(error.response.status == 401 && error.config && !error.config._isRetry) {
 
-    console.log('[INTERCEPTOR] REQUEST');
-    console.log(request);
+            originalRequest._isRetry = true;
 
-    return request;
-});
+            try {
+                const {isAuthenticated, refresh} = useAuthStore.getState();
 
-localNetApi.interceptors.request.use(response => {
-    return response;
-}, async error => {
+                console.log('STATUS 401, refreshing...');
 
-    console.error('[INTERCEPTOR] localNetApi RESPONSE ERROR');
-    console.error(error);
+                await refresh();
 
+                console.log('REFRESHED, AUTHENTICATED: ' + isAuthenticated)
 
-    const originalRequest = error.config;
-
-    if (error.response.status == 401 && originalRequest && !originalRequest._isRetry) {
-
-        try {
-
-            const {isAuthenticated, refresh} = useAuthStore.getState();
-
-            console.log('Status 401, refreshing...');
-
-            await refresh();
-
-            console.log('REFRESHED, AUTHENTICATED: ' + isAuthenticated);
-
-            return localNetApi.request(originalRequest);
-
-        } catch (e) {
-            console.log('Not authorized');
+                return localNetApi.request(originalRequest);
+            } catch(e) {
+                console.log(`Authorization failed with error - ${e}`);
+            }
         }
 
+        throw error;
     }
-    throw error;
-});
+);
+
+export default localNetApi;
