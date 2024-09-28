@@ -7,7 +7,7 @@ export default function AuthorsPage() {
     const authorsStore = useAuthorsStore();
 
     const fetchAuthors = async () => {
-       await authorsStore.getAuthors();
+        await authorsStore.getAuthors();
     }
 
     useEffect(() => {
@@ -19,9 +19,12 @@ export default function AuthorsPage() {
             <h1>Authors</h1>
 
             <ul>
-                {authorsStore.authors.map(author => (<li key={author.authorId}>
-                   First Name : {author.firstName}, birth date {author.birthDate}, created at {author.createdAt}, updated at {author.updatedAt}
-                </li>))}
+                {authorsStore.authors.map(author => (
+                    <li key={author.authorId}>
+                        First Name : {author.firstName}, lastName: {author.lastName} | birth date {author.birthDate}, created
+                        at {author.createdAt},
+                        updated at {author.updatedAt}
+                    </li>))}
             </ul>
         </div>
     );

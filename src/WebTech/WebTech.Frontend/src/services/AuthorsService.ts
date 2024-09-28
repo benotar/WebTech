@@ -15,12 +15,12 @@ export default class AuthorsService {
 
     static async update(params: IUpdateAuthor) : Promise<AxiosResponse<IServerResponsePayload<IAuthor>>> {
         return await localNetApi
-            .post<IServerResponsePayload<IAuthor>>(`${ENDPOINTS.AUTHORS.UPDATE}/${params.authorId}`, params);
+            .post<IServerResponsePayload<IAuthor>>(`${ENDPOINTS.AUTHORS.UPDATE(params.authorId)}`, params);
     }
 
     static async delete(authorId: string) : Promise<AxiosResponse<IServerResponsePayload<IAuthor>>> {
         return await localNetApi
-            .post<IServerResponsePayload<IAuthor>>(`${ENDPOINTS.AUTHORS.DELETE}/${authorId}`);
+            .delete<IServerResponsePayload<IAuthor>>(`${ENDPOINTS.AUTHORS.DELETE(authorId)}`);
     }
 
     static async getList() : Promise<AxiosResponse<IServerResponsePayload<IAuthor[]>>> {

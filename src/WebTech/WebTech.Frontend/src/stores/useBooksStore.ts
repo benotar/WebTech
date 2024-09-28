@@ -12,7 +12,7 @@ export const useBooksStore = create<IBookStore>((set) => ({
     getBooks: async (): Promise<void> => {
         set({isLoading: true});
 
-        const response = await BooksService.getList();
+        const response = await BooksService.get();
 
         if (response.data.isSucceed) {
             set({books: response.data.data});

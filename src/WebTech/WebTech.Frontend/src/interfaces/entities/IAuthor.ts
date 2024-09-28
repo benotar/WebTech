@@ -1,6 +1,7 @@
 export default interface IAuthor {
-    authorId : string;
+    id : string;
     firstName : string;
+    lastName : string;
     birthDate : string;
     createdAt : string;
     updatedAt : string;

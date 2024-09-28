@@ -15,15 +15,15 @@ export default class BooksService {
 
     static async update(params: IUpdateBook) : Promise<AxiosResponse<IServerResponsePayload<IBook>>> {
         return await localNetApi
-            .post<IServerResponsePayload<IBook>>(`${ENDPOINTS.BOOKS.UPDATE}/${params.bookId}`, params);
+            .post<IServerResponsePayload<IBook>>(`${ENDPOINTS.BOOKS.UPDATE(params.bookId)}`, params);
     }
 
     static async delete(bookId: string) : Promise<AxiosResponse<IServerResponsePayload<IBook>>> {
         return await localNetApi
-            .post<IServerResponsePayload<IBook>>(`${ENDPOINTS.BOOKS.DELETE}/${bookId}`);
+            .delete<IServerResponsePayload<IBook>>(`${ENDPOINTS.BOOKS.DELETE(bookId)}`);
     }
 
-    static async getList() : Promise<AxiosResponse<IServerResponsePayload<IBook[]>>> {
+    static async get() : Promise<AxiosResponse<IServerResponsePayload<IBook[]>>> {
         return await localNetApi.get<IServerResponsePayload<IBook[]>>(ENDPOINTS.BOOKS.GET);
     }
 }
