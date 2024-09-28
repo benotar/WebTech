@@ -18,14 +18,14 @@ export default function AuthorsPage() {
         <div>
             <h1>Authors</h1>
 
-            <ul>
-                {authorsStore.authors.map(author => (
-                    <li key={author.id}>
-                        First Name : {author.firstName}, lastName: {author.lastName} | birth date {author.birthDate}, created
-                        at {author.createdAt},
-                        updated at {author.updatedAt}
-                    </li>))}
-            </ul>
+            {/*<ul>*/}
+            {/*    {authorsStore.authors.map(author => (*/}
+            {/*        <li key={author.id}>*/}
+            {/*            First Name : {author.firstName}, lastName: {author.lastName} | birth date {author.birthDate}, created*/}
+            {/*            at {author.createdAt},*/}
+            {/*            updated at {author.updatedAt}*/}
+            {/*        </li>))}*/}
+            {/*</ul>*/}
         </div>
     );
 }

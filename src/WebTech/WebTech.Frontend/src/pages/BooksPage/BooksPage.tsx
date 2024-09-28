@@ -1,16 +1,51 @@
 //import classes from './BooksPage.module.css';
 
-
+import {Table, } from 'antd';
 import {useBooksStore} from "../../stores/useBooksStore.ts";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
+import CreateBookForm from "../../components/CreateBookForm/CreateBookForm.tsx";
 
 export default function BooksPage() {
 
-    const [title, setTitle] = useState('');
-    const [genre, setGenre] = useState('');
-    const [publicationYear, setPublicationYear] = useState(0);
-    const [authorFirstName, setAuthorFirstName] = useState('');
-    const [authorLastName, setAuthorLastName] = useState('');
+    const columns = [
+        {
+            key: '1',
+            title: 'Id',
+            dataIndex: 'id'
+        },
+        {
+            key: '2',
+            title: 'Title ',
+            dataIndex: 'title'
+        },
+        {
+            key: '3',
+            title: 'Genre',
+            dataIndex: 'genre'
+        },
+        {
+            key: '4',
+            title: 'PublicationYear ',
+            dataIndex: 'publicationYear'
+        },
+        {
+            key: '5',
+            title: 'AuthorId ',
+            dataIndex: 'authorId'
+        },
+        {
+            key: '6',
+            title: 'CreatedAt ',
+            dataIndex: 'createdAt'
+        },
+        {
+            key: '7',
+            title: 'UpdatedAt ',
+            dataIndex: 'updatedAt'
+        },
+    ]
+
+
 
 
     const bookStore = useBooksStore();
@@ -23,92 +58,16 @@ export default function BooksPage() {
     }, []);
 
 
-    const handleCreateBook = async () => {
-        await bookStore.createBook({
-            title: title,
-            genre: genre,
-            publicationYear: publicationYear,
-            authorFirstName: authorFirstName,
-            authorLastName: authorLastName
-        });
-
-        clearForm();
-
-        await fetchBooks();
-    }
-
-
-
-    const handleDeleteBook = async (bookId: string) => {
-        try {
-            await bookStore.deleteBook(bookId);
-
-            await fetchBooks();
-        } catch (error) {
-            console.log('Error deleting book: ', error);
-        }
-    }
-
-    const clearForm = () => {
-        setTitle('');
-        setGenre('');
-        setPublicationYear(0);
-        setAuthorFirstName('');
-        setAuthorLastName('');
-    }
-
     return (
         <>
-            <h1>Books</h1>
 
-            <ul>
-                {bookStore.books.map(book => (
-                    <li key={book.id}>
-                        <p>ID : {book.id}</p>
-                        <p>Title: {book.title}, author id {book.authorId}</p>
-                        <button onClick={() => handleDeleteBook(book.id)}>Delete</button>
-                    </li>
-                ))}
-            </ul>
+            <CreateBookForm onBookCreated={fetchBooks}/>
 
+            <Table
+                columns={columns}
+                dataSource={bookStore.books}>
 
-            {/*    TEST*/}
-            <div>
-                <input
-                    onChange={e => setTitle(e.target.value)}
-                    value={title}
-                    type="text"
-                    placeholder="Title"
-                />
-                <input
-                    onChange={e => setGenre(e.target.value)}
-                    value={genre}
-                    type="text"
-                    placeholder="Genre"
-                />
-                <input
-                    onChange={e => setPublicationYear(e.target.valueAsNumber)}
-                    value={publicationYear}
-                    type="number"
-                    placeholder="Publication Year"
-                />
-                <input
-                    onChange={e => setAuthorFirstName(e.target.value)}
-                    value={authorFirstName}
-                    type="text"
-                    placeholder="Author FirstName"
-                />
-                <input
-                    onChange={e => setAuthorLastName(e.target.value)}
-                    value={authorLastName}
-                    type="text"
-                    placeholder="Genre"
-                />
-
-                <button onClick={handleCreateBook}>Create</button>
-
-
-            </div>
+            </Table>
 
         </>
     );
