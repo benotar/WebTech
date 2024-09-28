@@ -1,6 +1,6 @@
 import {FC} from "react";
 import classes from './CreateBookForm.module.css';
-import {Button, Form, Input, Typography} from "antd";
+import {Button, Form, Input, message, Typography} from "antd";
 import {useBooksStore} from "../../stores/useBooksStore.ts";
 
 interface ICreateBookFormProps {
@@ -9,6 +9,7 @@ interface ICreateBookFormProps {
 
 
 const CreateBookForm: FC<ICreateBookFormProps> = ({onBookCreated}) => {
+
 
     const [form] = Form.useForm();
 
@@ -24,6 +25,7 @@ const CreateBookForm: FC<ICreateBookFormProps> = ({onBookCreated}) => {
             await onBookCreated();
         } catch (error) {
             console.log('Form validation failed: ', error);
+            message.error('Invalid input data!');
         }
     }
 
@@ -70,7 +72,7 @@ const CreateBookForm: FC<ICreateBookFormProps> = ({onBookCreated}) => {
                         type: "number",
                         min: 1800,
                         max: new Date().getFullYear(),
-                        transform: (value) => Number(value), // Перетворюємо в число
+                        transform: (value) => Number(value),
                         message: `Year must be between 1800 and ${new Date().getFullYear()}`,
                     },
                 ]}

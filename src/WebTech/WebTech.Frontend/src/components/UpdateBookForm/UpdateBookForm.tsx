@@ -1,28 +1,33 @@
-import {FC} from "react";
-import {Button, Form, Input} from "antd";
+import {FC, useEffect} from "react";
+import {Button, Form, Input, message} from "antd";
 import IBook from "../../interfaces/entities/IBook.ts";
 import {useBooksStore} from "../../stores/useBooksStore.ts";
 
 interface IUpdateBookFormProps {
-    onBookCreated: () => Promise<void>;
+    onBookUpdated: () => Promise<void>;
     editingBook: IBook;
-    // onUpdate: (updatedValues: IBook) => void;
 }
 
 
-
-
-const UpdateBookForm: FC<IUpdateBookFormProps> = ({onBookCreated, editingBook}) => {
+const UpdateBookForm: FC<IUpdateBookFormProps> = ({onBookUpdated, editingBook}) => {
 
     const [form] = Form.useForm();
     const bookStore = useBooksStore();
 
+    useEffect(() => {
+        if (editingBook) {
+            form.setFieldsValue({
+                title: editingBook.title,
+                genre: editingBook.genre,
+                publicationYear: editingBook.publicationYear
+            });
+        }
+    }, [editingBook, form]);
 
     const onUpdateBook = async () => {
 
         try {
             const values = await form.validateFields();
-
 
             await bookStore.updateBook({
                 bookId: editingBook.id,
@@ -31,14 +36,17 @@ const UpdateBookForm: FC<IUpdateBookFormProps> = ({onBookCreated, editingBook}) 
                 publicationYear: values.publicationYear,
             });
 
+
             form.resetFields();
-            await onBookCreated();
+            await onBookUpdated();
+            message.success('Book updated successfully!');
         } catch (error) {
             console.log('Form validation failed: ', error);
+            message.error('Invalid input data!');
         }
     }
 
-    return(
+    return (
         <Form
             form={form}
             initialValues={editingBook || []}

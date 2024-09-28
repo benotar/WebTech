@@ -38,7 +38,7 @@ export const useBooksStore = create<IBookStore>((set) => ({
 
         const response = await BooksService.update(request);
 
-        if(!response.data.isSucceed) {
+        if(!response.data.errorCode) {
             set({errorCode: response.data.errorCode});
         }
 
