@@ -2,7 +2,6 @@
 import AuthorsService from "../../services/AuthorsService.ts";
 import {useEffect, useState} from "react";
 import IAuthor from "../../interfaces/entities/IAuthor.ts";
-import {useAuthStore} from "../../store/store.ts";
 
 export default function AuthorsPage() {
 
@@ -29,7 +28,7 @@ export default function AuthorsPage() {
 
             <ul>
                 {authors.map(author => (<li key={author.authorId}>
-                    {author.userName} {author.firstName} {author.birthDate}
+                   First Name : {author.firstName}, birth date {author.birthDate}, created at {author.createdAt}, updated at {author.updatedAt}
                 </li>))}
             </ul>
         </div>
