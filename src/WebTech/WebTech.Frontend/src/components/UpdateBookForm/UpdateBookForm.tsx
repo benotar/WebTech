@@ -1,25 +1,37 @@
 import {FC} from "react";
-import classes from './CreateBookForm.module.css';
-import {Button, Form, Input, Typography} from "antd";
+import {Button, Form, Input} from "antd";
+import IBook from "../../interfaces/entities/IBook.ts";
 import {useBooksStore} from "../../stores/useBooksStore.ts";
 
-interface ICreateBookFormProps {
+interface IUpdateBookFormProps {
     onBookCreated: () => Promise<void>;
+    editingBook: IBook;
+    // onUpdate: (updatedValues: IBook) => void;
 }
 
 
-const CreateBookForm: FC<ICreateBookFormProps> = ({onBookCreated}) => {
+
+
+const UpdateBookForm: FC<IUpdateBookFormProps> = ({onBookCreated, editingBook}) => {
 
     const [form] = Form.useForm();
-
     const bookStore = useBooksStore();
 
-    const onCreateBook = async () => {
+
+    const onUpdateBook = async () => {
 
         try {
             const values = await form.validateFields();
 
-            await bookStore.createBook(values);
+
+            await bookStore.updateBook({
+                bookId: editingBook.id,
+                title: values.title,
+                genre: values.genre,
+                publicationYear: values.publicationYear,
+                authorFirstName: editingBook.
+            });
+
             form.resetFields();
             await onBookCreated();
         } catch (error) {
@@ -27,10 +39,11 @@ const CreateBookForm: FC<ICreateBookFormProps> = ({onBookCreated}) => {
         }
     }
 
-    return (
-        <Form form={form} className={classes.createForm}>
-
-            <Typography.Title>Welcome to books page!</Typography.Title>
+    return(
+        <Form
+            form={form}
+            initialValues={editingBook || []}
+        >
 
             <Form.Item
                 label='Title'
@@ -44,9 +57,8 @@ const CreateBookForm: FC<ICreateBookFormProps> = ({onBookCreated}) => {
                     }
                 ]}
             >
-                <Input placeholder='Enter title'/>
+                <Input/>
             </Form.Item>
-
             <Form.Item
                 label='Genre'
                 name='genre'
@@ -59,7 +71,7 @@ const CreateBookForm: FC<ICreateBookFormProps> = ({onBookCreated}) => {
                     }
                 ]}
             >
-                <Input placeholder='Enter genre'/>
+                <Input/>
             </Form.Item>
             <Form.Item
                 label='Publication year'
@@ -75,33 +87,15 @@ const CreateBookForm: FC<ICreateBookFormProps> = ({onBookCreated}) => {
                     },
                 ]}
             >
-                <Input placeholder='Enter publication year'/>
+                <Input/>
             </Form.Item>
-            <Form.Item
-                label='Author first name'
-                name='authorFirstName'
-                rules={[
-                    {required: true, message: "Please enter author's first name"},
-                    {min: 2, message: "Author's first name must be at least 2 characters"},
-                ]}
-            >
-                <Input placeholder='Enter author first name'/>
+            <Form.Item>
+                <Form.Item>
+                    <Button type="primary" onClick={onUpdateBook}>Save</Button>
+                </Form.Item>
             </Form.Item>
-            <Form.Item
-                label='Author last name'
-                name='authorLastName'
-                rules={[
-                    {required: true, message: "Please enter author's last name"},
-                    {min: 2, message: "Author's last name must be at least 2 characters"},
-                ]}
-            >
-                <Input placeholder='Enter author last name'/>
-            </Form.Item>
-            <Button type='primary' htmlType='submit' onClick={onCreateBook}>
-                Add a new book
-            </Button>
         </Form>
     );
 }
 
-export default CreateBookForm;
+export default UpdateBookForm;

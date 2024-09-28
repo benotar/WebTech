@@ -1,0 +1,9 @@
+.createForm {
+    background-color: hsla(219, 59%, 89%, 0.33);
+    box-shadow: 0px 8px 32px 0 rgba(72, 73, 68, 0.33);
+    backdrop-filter: blur(3px);
+    padding: 16px 16px 16px 16px;
+    margin:  16px;
+    border-radius: 13px;
+    text-align: center;
+}
