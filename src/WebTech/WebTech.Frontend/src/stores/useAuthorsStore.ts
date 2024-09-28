@@ -3,7 +3,7 @@ import {create} from "zustand";
 import AuthorsService from "../services/AuthorsService.ts";
 import {ICreateAuthor} from "../interfaces/models/request/ICreateAuthor.ts";
 import {IUpdateAuthor} from "../interfaces/models/request/IUpdateAuthor.ts";
-import IAuthorsStore from "../interfaces/stores/IAuthorsStore.ts";
+import {IAuthorsStore} from "../interfaces/stores/IAuthorsStore.ts";
 
 export const useAuthorsStore = create<IAuthorsStore>((set) => ({
     isLoading: false,

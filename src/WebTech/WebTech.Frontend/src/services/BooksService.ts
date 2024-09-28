@@ -18,9 +18,9 @@ export default class BooksService {
             .post<IServerResponsePayload<IBook>>(`${ENDPOINTS.BOOKS.UPDATE}/${params.bookId}`, params);
     }
 
-    static async delete(authorId: string) : Promise<AxiosResponse<IServerResponsePayload<IBook>>> {
+    static async delete(bookId: string) : Promise<AxiosResponse<IServerResponsePayload<IBook>>> {
         return await localNetApi
-            .post<IServerResponsePayload<IBook>>(`${ENDPOINTS.BOOKS.DELETE}/${authorId}`);
+            .post<IServerResponsePayload<IBook>>(`${ENDPOINTS.BOOKS.DELETE}/${bookId}`);
     }
 
     static async getList() : Promise<AxiosResponse<IServerResponsePayload<IBook[]>>> {
