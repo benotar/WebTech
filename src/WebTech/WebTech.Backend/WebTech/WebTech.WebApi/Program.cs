@@ -45,15 +45,14 @@ app.UseCustomExceptionHandler();
 
 app.UseHostFilteringMiddleware();
 
+app.UseCors(corsConfig.PolicyName);
+
 app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseCors(corsConfig.PolicyName);
-
 app.MapControllers();
 
 app.MapGet("/", () => $"Welcome to the Home Page WebTech API!\nUTC Time: {DateTime.UtcNow}");
-
 
 app.Run();
