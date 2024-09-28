@@ -3,6 +3,6 @@ export interface IUpdateBook {
     title: string;
     genre: string;
     publicationYear: number;
-    authorFirstName: string;
-    authorLastName: string;
+    // authorFirstName: string;
+    // authorLastName: string;
 }

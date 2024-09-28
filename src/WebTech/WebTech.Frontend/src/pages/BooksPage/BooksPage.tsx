@@ -12,6 +12,7 @@ export default function BooksPage() {
     const [authorFirstName, setAuthorFirstName] = useState('');
     const [authorLastName, setAuthorLastName] = useState('');
 
+
     const bookStore = useBooksStore();
 
     const fetchBooks = async () => {
@@ -31,8 +32,12 @@ export default function BooksPage() {
             authorLastName: authorLastName
         });
 
+        clearForm();
+
         await fetchBooks();
     }
+
+
 
     const handleDeleteBook = async (bookId: string) => {
         try {
@@ -42,6 +47,14 @@ export default function BooksPage() {
         } catch (error) {
             console.log('Error deleting book: ', error);
         }
+    }
+
+    const clearForm = () => {
+        setTitle('');
+        setGenre('');
+        setPublicationYear(0);
+        setAuthorFirstName('');
+        setAuthorLastName('');
     }
 
     return (
@@ -93,6 +106,7 @@ export default function BooksPage() {
                 />
 
                 <button onClick={handleCreateBook}>Create</button>
+
 
             </div>
 

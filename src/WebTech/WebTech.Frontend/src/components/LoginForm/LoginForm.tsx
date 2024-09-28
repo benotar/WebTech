@@ -1,49 +1,76 @@
-import {FC, useState} from 'react';
+import {FC, useEffect, useState} from 'react';
 import {useAuthStore} from "../../stores/useAuthStore.ts";
+import {v4 as uuidv4} from 'uuid';
+import {Button, Form, Input, Typography} from 'antd';
+import classes from './LoginForm.module.css';
 
 const LoginForm: FC = () => {
 
-     const {isAuthenticated, login, errorCode} =  useAuthStore();
 
-     const [userName, setUserName] = useState('');
-     const [password, setPassword] = useState('');
+    const {login} = useAuthStore();
+    const [userName, setUserName] = useState('');
+    const [password, setPassword] = useState('');
     const [fingerprint, setFingerprint] = useState('');
 
+    useEffect(() => {
+        const generatedFingerprint = uuidv4();
+
+        setFingerprint(generatedFingerprint);
+    }, []);
+
     const handleLogin = async () => {
+
         await login({
-           userName: userName,
-           password: password,
-           fingerprint: fingerprint
+            userName: userName,
+            password: password,
+            fingerprint: fingerprint
         });
     }
 
     return (
-        <div>
-            <input
-                onChange={e => setUserName(e.target.value)}
-                value={userName}
-                type="text"
-                placeholder="Username"
-            />
-            <input
-                onChange={e => setPassword(e.target.value)}
-                value={password}
-                type="text"
-                placeholder="Password"
-            />
-            <input
-                onChange={e => setFingerprint(e.target.value)}
-                value={fingerprint}
-                type="text"
-                placeholder="Fingerprint"
-            />
+        <div className={classes.appBg}>
 
-            <button onClick={handleLogin}>Login</button>
+            <Form className={classes.loginForm}>
 
-            <h3>Is Authenticated: {isAuthenticated ? 'Yes' : 'No'}</h3>
-            <h3>Error code: {errorCode ? errorCode : 'No'}</h3>
+                <Typography.Title>Welcome Back!</Typography.Title>
+
+                <Form.Item
+                    rules={[
+                        {
+                            required: true,
+                            type: 'string',
+                            message: 'Please enter username'
+                        }
+                    ]}
+                    label='Username' name='myUsername'>
+
+                    <Input onChange={e => setUserName(e.target.value)}
+                           value={userName}
+                           placeholder='Enter username'/>
+
+                </Form.Item>
+
+                <Form.Item
+                    rules={[
+                        {
+                            required: true,
+                            type: 'string',
+                            message: 'Please enter password'
+                        }
+                    ]}
+                    label='Password' name='myPassword'>
+
+                    <Input.Password onChange={e => setPassword(e.target.value)}
+                                    value={password}
+                                    placeholder='Enter password'/>
+
+                </Form.Item>
+
+                <Button type='primary' htmlType='submit' block
+                        onClick={handleLogin}>Login</Button>
+
+            </Form>
         </div>
-
     );
 };
 

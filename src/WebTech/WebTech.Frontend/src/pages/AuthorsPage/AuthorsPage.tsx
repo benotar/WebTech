@@ -20,7 +20,7 @@ export default function AuthorsPage() {
 
             <ul>
                 {authorsStore.authors.map(author => (
-                    <li key={author.authorId}>
+                    <li key={author.id}>
                         First Name : {author.firstName}, lastName: {author.lastName} | birth date {author.birthDate}, created
                         at {author.createdAt},
                         updated at {author.updatedAt}
