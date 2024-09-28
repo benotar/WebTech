@@ -1,32 +1,40 @@
-//import classes from './UsersPage.module.css';
-import {useEffect, useState} from "react";
-import IUser from "../../interfaces/entities/IUser.ts";
-import {useAuthStore} from "../../stores/useAuthStore.ts";
-
+import classes from './UsersPage.module.css';
+import { useEffect, useState } from "react";
+import IUser from "../../interfaces/entities/IUser";
+import { useAuthStore } from "../../stores/useAuthStore";
+import { Spin, Table} from "antd";
 
 export default function UsersPage() {
-
     const [userInfo, setUserInfo] = useState<IUser | null>(null);
-    const {user} = useAuthStore();
+    const { user } = useAuthStore();
 
     useEffect(() => {
         setUserInfo(user);
-    }, []);
+    }, [user]);
 
 
+    const userInfoColumns = [
+        { title: 'Id', dataIndex: 'id', key: 'id' },
+        { title: 'UserName', dataIndex: 'userName', key: 'userName' },
+        { title: 'FirstName', dataIndex: 'firstName', key: 'firstName' },
+        { title: 'LastName', dataIndex: 'lastName', key: 'lastName' },
+        { title: 'BirthDate', dataIndex: 'birthDate', key: 'birthDate' },
+        { title: 'Address', dataIndex: 'address', key: 'address' },
+        { title: 'Created At', dataIndex: 'createdAt', key: 'createdAt' },
+        { title: 'Updated At', dataIndex: 'updatedAt', key: 'updatedAt' },
+    ];
 
     return (
-        <div>
+        <div className={classes.container}>
             <h1>User Profile</h1>
-            {userInfo ? (
-                <>
-                    <p>Username: {userInfo.userName}</p>
-                    <p>First Name: {userInfo.firstName}</p>
-                    <p>Last Name: {userInfo.lastName}</p>
-                    <p>Address: {userInfo.address}</p>
-                </>
+            {userInfoColumns ? (
+                <Table
+                    columns={userInfoColumns}
+                    dataSource={[userInfo]}
+                    rowKey="id"
+                />
             ) : (
-                <p>Loading...</p>
+                <Spin tip="Loading..."/>
             )}
         </div>
     );
