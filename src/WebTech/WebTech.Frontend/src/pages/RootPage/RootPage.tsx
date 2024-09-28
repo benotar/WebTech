@@ -1,11 +1,12 @@
-
-import Header from "../../components/Header/Header.tsx";
+import MyHeader from "../../components/Header/MyHeader.tsx";
 import {Outlet} from "react-router-dom";
+
+
 
 export default function RootPage() {
     return (
         <>
-            <Header/>
+            <MyHeader/>
             <main><Outlet/></main>
         </>
     );

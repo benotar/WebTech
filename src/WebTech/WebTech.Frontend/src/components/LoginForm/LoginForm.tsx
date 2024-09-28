@@ -3,6 +3,7 @@ import {useAuthStore} from "../../stores/useAuthStore.ts";
 import {v4 as uuidv4} from 'uuid';
 import {Button, Form, Input, Typography} from 'antd';
 import classes from './LoginForm.module.css';
+import {useNavigate} from "react-router-dom";
 
 const LoginForm: FC = () => {
 
@@ -11,6 +12,8 @@ const LoginForm: FC = () => {
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [fingerprint, setFingerprint] = useState('');
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         const generatedFingerprint = uuidv4();
@@ -25,6 +28,8 @@ const LoginForm: FC = () => {
             password: password,
             fingerprint: fingerprint
         });
+
+        navigate('/')
     }
 
     return (

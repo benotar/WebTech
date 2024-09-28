@@ -2,7 +2,8 @@ import {Link} from "react-router-dom";
 import classes from './Header.module.css';
 import {useAuthStore} from "../../stores/useAuthStore.ts";
 
-export default function Header() {
+
+export default function MyHeader() {
 
     const {isAuthenticated} = useAuthStore();
 

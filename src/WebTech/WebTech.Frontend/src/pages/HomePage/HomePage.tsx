@@ -1,10 +1,24 @@
-export default  function HomePage(){
-    return(
-        <>
-            <h2>Welcome on Web Tech</h2>
-            <p>
-                React has a community of millions of developers. On this page we’ve listed some React-related communities that you can be a part of; see the other pages in this section for additional online and in-person learning materials.
+import classes from './HomePage.module.css';
+import {useAuthStore} from "../../stores/useAuthStore.ts";
+
+export default function HomePage() {
+
+    const {isAuthenticated, user} = useAuthStore();
+
+    return (
+        <div className={classes.container}>
+            <h2 className={classes.greeting}>Welcome on Web Tech</h2>
+
+            {/* Умовне рендерування для автентифікованих користувачів */}
+            {isAuthenticated ? (
+                <p className={classes.greeting}>Hello, {user?.userName}!</p>
+            ) : (
+                <p className={classes.greeting}>Hello, Guest!</p>
+            )}
+
+            <p className={classes.desc}>
+                Some text
             </p>
-        </>
+        </div>
     );
 }
