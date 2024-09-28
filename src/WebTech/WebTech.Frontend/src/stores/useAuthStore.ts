@@ -1,9 +1,9 @@
 import {create} from 'zustand';
 import {persist, createJSONStorage} from 'zustand/middleware'
-import {IAuthStore} from "../interfaces/stores/IAuthStore.ts";
 import {ILoginRequest} from "../interfaces/models/request/ILoginRequest.ts";
 import AuthService from "../services/AuthService.ts";
 import UserService from "../services/UserService.ts";
+import {IAuthStore} from "../interfaces/stores/IAuthStore.ts";
 
 export const useAuthStore = create<IAuthStore>()(persist((set) => ({
     isAuthenticated: false,
@@ -27,9 +27,12 @@ export const useAuthStore = create<IAuthStore>()(persist((set) => ({
                 errorCode: response.data.errorCode
             });
 
-            const getUserResponse = await UserService.GetMe();
+            if(response.data.isSucceed) {
+                const getUserResponse = await UserService.GetMe();
 
-            set({user: getUserResponse.data.data});
+                set({user: getUserResponse.data.data});
+            }
+
 
             return response.data.data;
         }catch(error){

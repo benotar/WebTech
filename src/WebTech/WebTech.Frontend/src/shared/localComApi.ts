@@ -10,53 +10,54 @@ export const localComApi: AxiosInstance = axios.create({
         'Content-Type': 'application/json'}
 });
 
-localComApi.interceptors.request.use((request) => {
-
-    const {token} = useAuthStore.getState();
-
-    if (token) {
-        request.headers.Authorization = `Bearer ${token}`;
-    }
-
-    console.log('[INTERCEPTOR] localComApi REQUEST');
-    console.log(request);
-
-    return request;
-})
-
 localComApi.interceptors.request.use(
     (config) => {
-        console.log('[INTERCEPTOR] RESPONSE SUCCESS');
-        console.log(config);
+        const {token} = useAuthStore.getState();
+
+        if(token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
 
         return config;
     },
-    async (error) => {
-        console.log('[INTERCEPTOR] localNetApi RESPONSE ERROR');
-        console.error(error);
+    (error) => {
+        return Promise.reject(error);
+    }
+)
 
+
+localComApi.interceptors.response.use(
+    (response) => response,
+    async (error) => {
         const originalRequest = error.config;
 
-        if(error.response.status == 401 && error.config && !error.config._isRetry) {
+        if(error.response) {
+            if(error.response.status === 401 && !originalRequest._retry){
+                originalRequest._retry = true;
 
-            originalRequest._isRetry = true;
+                try{
+                    const refresh = useAuthStore.getState().refresh;
 
-            try {
-                const {isAuthenticated, refresh} = useAuthStore.getState();
+                    await refresh();
 
-                console.log('STATUS 401, refreshing...');
+                    const token = useAuthStore.getState().token;
 
-                await refresh();
+                    originalRequest.headers.Authorization = `Bearer ${token}`;
 
-                console.log('REFRESHED, AUTHENTICATED: ' + isAuthenticated)
+                    return localNetApi(originalRequest);
+                }catch(refreshError) {
+                    console.error('Error refreshing token:', refreshError);
 
-                return localNetApi.request(originalRequest);
-            } catch(e) {
-                console.log(`Authorization failed with error - ${e}`);
+                    const logout = useAuthStore.getState().logout;
+
+                    await logout();
+                }
             }
+        }else  {
+            console.error('The request did not reach the server or the server did not respond');
         }
 
-        throw error;
+        return Promise.reject(error);
     }
 );
 

@@ -8,7 +8,7 @@ export const ENDPOINTS = {
         LOGOUT: `${LOCAL_COM_API_URL}/users/logout`,
         ME: `${LOCAL_COM_API_URL}/users/me`,
     },
-    REFRESH:  `${LOCAL_COM_API_URL}/refresh`,
+    REFRESH:  `${LOCAL_COM_API_URL}/token/refresh`,
     AUTHORS: {
         GET: `${LOCAL_NET_API_URL}/authors/get-all`,
         CREATE: `${LOCAL_NET_API_URL}/authors/create`,
