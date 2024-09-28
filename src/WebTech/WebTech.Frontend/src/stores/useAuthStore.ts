@@ -4,6 +4,7 @@ import {ILoginRequest} from "../interfaces/models/request/ILoginRequest.ts";
 import AuthService from "../services/AuthService.ts";
 import UserService from "../services/UserService.ts";
 import {IAuthStore} from "../interfaces/stores/IAuthStore.ts";
+import {IRegisterRequest} from "../interfaces/models/request/IRegisterRequest.ts";
 
 export const useAuthStore = create<IAuthStore>()(persist((set) => ({
     isAuthenticated: false,
@@ -27,7 +28,7 @@ export const useAuthStore = create<IAuthStore>()(persist((set) => ({
                 errorCode: response.data.errorCode
             });
 
-            if(response.data.isSucceed) {
+            if (response.data.isSucceed) {
                 const getUserResponse = await UserService.GetMe();
 
                 set({user: getUserResponse.data.data});
@@ -35,21 +36,38 @@ export const useAuthStore = create<IAuthStore>()(persist((set) => ({
 
 
             return response.data.data;
-        }catch(error){
+        } catch (error) {
             console.error('Login error:', error);
 
             set({
                 isAuthenticated: false,
-                errorCode: 'Login failed', // або можна витягнути код помилки з `error.response`
+                errorCode: 'Login failed'
             });
 
             return null;
-        }finally {
+        } finally {
             set({isLoading: false});
 
         }
     },
+    register: async (params: IRegisterRequest): Promise<void> => {
+        console.log('register');
 
+        set({isLoading: true});
+
+        try {
+
+            await AuthService.register(params);
+
+        } catch (error) {
+            console.error('Registration error: ', error);
+            set({errorCode: 'An error occurred during registration.'});
+
+            throw new Error('Registration failed');
+        } finally {
+            set({isLoading: false});
+        }
+    },
     logout: async (): Promise<void> => {
         console.log('logout');
 
@@ -57,13 +75,14 @@ export const useAuthStore = create<IAuthStore>()(persist((set) => ({
 
         await AuthService.logout();
 
-        set({isAuthenticated: false,
-        errorCode: null,
-        token: null,
-        user:null});
+        set({
+            isAuthenticated: false,
+            errorCode: null,
+            token: null,
+            user: null
+        });
 
         set({isLoading: false});
-
     },
 
     refresh: async (): Promise<void> => {

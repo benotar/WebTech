@@ -23,7 +23,11 @@ export default function MyHeader() {
                             <Link to='/logout' className={classes.navItem}>Logout</Link>
                         </>
                     ) : (
-                        <Link to='/login' className={classes.navItem}>Login</Link>
+                        <>
+                            <Link to='/login' className={classes.navItem}>Login</Link>
+                            <Link to='/register' className={classes.navItem}>Register</Link>
+                        </>
+
                     )}
 
 

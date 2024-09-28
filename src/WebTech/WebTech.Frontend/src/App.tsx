@@ -6,6 +6,7 @@ import BooksPage from "./pages/BooksPage/BooksPage.tsx";
 import LoginForm from "./components/LoginForm/LoginForm.tsx";
 import Logout from "./components/Logout/Logout.tsx";
 import UsersPage from "./pages/UsersPage/UsersPage.tsx";
+import RegistrationForm from "./components/RegistrationForm/RegistrationForm.tsx";
 
 export default function App() {
     return (
@@ -16,6 +17,7 @@ export default function App() {
                     <Route path='authors' element={<AuthorsPage/>}/>
                     <Route path='books' element={<BooksPage/>}/>
                     <Route path='login' element={<LoginForm/>}/>
+                    <Route path='register' element={<RegistrationForm/>}/>
                     <Route path='logout' element={<Logout/>}/>
                     <Route path='me' element={<UsersPage/>}/>
                 </Route>
