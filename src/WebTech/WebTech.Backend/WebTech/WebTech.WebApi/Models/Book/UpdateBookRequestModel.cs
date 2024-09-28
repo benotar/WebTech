@@ -3,7 +3,7 @@ using WebTech.Application.Common.ValidationAttributes;
 
 namespace WebTech.WebApi.Models.Book;
 
-public class CreateOrUpdateBookRequestModel
+public class UpdateBookRequestModel
 {
     [Required]
     [MaxLength(88)]
@@ -18,14 +18,4 @@ public class CreateOrUpdateBookRequestModel
     [Required]
     [PublicationYear]
     public int PublicationYear { get; set; }
-
-    [Required]
-    [MaxLength(88)]
-    [MinLength(3)]
-    public string AuthorFirstName { get; set; }
-    
-    [Required]
-    [MaxLength(88)]
-    [MinLength(3)]
-    public string AuthorLastName { get; set; }
 }

@@ -29,7 +29,6 @@ const UpdateBookForm: FC<IUpdateBookFormProps> = ({onBookCreated, editingBook}) 
                 title: values.title,
                 genre: values.genre,
                 publicationYear: values.publicationYear,
-                authorFirstName: editingBook.
             });
 
             form.resetFields();

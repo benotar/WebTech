@@ -6,11 +6,11 @@ namespace WebTech.Application.Interfaces.Services;
 
 public interface IBookService
 {
-    Task<Result<Book>> CreateAsync(CreateOrUpdateBookDto createOrUpdateBookDto);
+    Task<Result<Book>> CreateAsync(CreateBookDto createBookDto);
 
     Task<Result<IEnumerable<Book>>> GetAsync();
     
-    Task<Result<Book>> UpdateAsync(Guid bookId, CreateOrUpdateBookDto createOrUpdateBookDto);
+    Task<Result<Book>> UpdateAsync(Guid bookId, UpdateBookDto createBookDto);
     
     Task<Result<None>> DeleteAsync(Guid bookId);
 }

@@ -1,6 +1,6 @@
 ﻿namespace WebTech.Application.DTOs;
 
-public class CreateOrUpdateBookDto
+public class CreateBookDto
 {
     public string AuthorFirstName { get; set; }
     

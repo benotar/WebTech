@@ -31,11 +31,11 @@ public class BookService : IBookService
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public async Task<Result<Book>> CreateAsync(CreateOrUpdateBookDto createOrUpdateBookDto)
+    public async Task<Result<Book>> CreateAsync(CreateBookDto createBookDto)
     {
         var existingAuthorIdResult = await _authorService.GetAuthorIdByAuthorNamesAsync(
-            createOrUpdateBookDto.AuthorFirstName,
-            createOrUpdateBookDto.AuthorLastName);
+            createBookDto.AuthorFirstName,
+            createBookDto.AuthorLastName);
 
         if (!existingAuthorIdResult.IsSucceed)
         {
@@ -43,8 +43,8 @@ public class BookService : IBookService
         }
 
         var isBookExistsCondition =
-            _queryProvider.ByPropertyName(nameof(createOrUpdateBookDto.Title), 
-                createOrUpdateBookDto.Title);
+            _queryProvider.ByPropertyName(nameof(createBookDto.Title), 
+                createBookDto.Title);
 
         var isBookExists = await _queryProvider.ExecuteQueryAsync(query =>
             query.AnyAsync(), isBookExistsCondition);
@@ -56,9 +56,9 @@ public class BookService : IBookService
 
         var newBook = new Book
         {
-            Title = createOrUpdateBookDto.Title,
-            Genre = createOrUpdateBookDto.Genre,
-            PublicationYear = createOrUpdateBookDto.PublicationYear,
+            Title = createBookDto.Title,
+            Genre = createBookDto.Genre,
+            PublicationYear = createBookDto.PublicationYear,
             AuthorId = existingAuthorIdResult.Data
         };
 
@@ -77,7 +77,7 @@ public class BookService : IBookService
         return Result<IEnumerable<Book>>.Success(books);
     }
     
-    public async Task<Result<Book>> UpdateAsync(Guid bookId, CreateOrUpdateBookDto createOrUpdateBookDto)
+    public async Task<Result<Book>> UpdateAsync(Guid bookId, UpdateBookDto createBookDto)
     {
         var existingBook = await GetBookByIdAsync(bookId, isTracking: true);
         
@@ -86,16 +86,16 @@ public class BookService : IBookService
             return Result<Book>.Error(ErrorCode.BookNotFound);
         }
 
-        if (StringComparer.OrdinalIgnoreCase.Equals(existingBook.Title, createOrUpdateBookDto.Title) &&
-            StringComparer.OrdinalIgnoreCase.Equals(existingBook.Genre, createOrUpdateBookDto.Genre) &&
-            existingBook.PublicationYear == createOrUpdateBookDto.PublicationYear)
+        if (StringComparer.OrdinalIgnoreCase.Equals(existingBook.Title, createBookDto.Title) &&
+            StringComparer.OrdinalIgnoreCase.Equals(existingBook.Genre, createBookDto.Genre) &&
+            existingBook.PublicationYear == createBookDto.PublicationYear)
         {
             return Result<Book>.Error(ErrorCode.BookDataIsTheSame);
         }
 
-        existingBook.Title = createOrUpdateBookDto.Title;
-        existingBook.Genre = createOrUpdateBookDto.Genre;
-        existingBook.PublicationYear = createOrUpdateBookDto.PublicationYear;
+        existingBook.Title = createBookDto.Title;
+        existingBook.Genre = createBookDto.Genre;
+        existingBook.PublicationYear = createBookDto.PublicationYear;
         existingBook.UpdatedAt = _dateTimeProvider.UtcNow;
 
         await _dbContext.SaveChangesAsync();

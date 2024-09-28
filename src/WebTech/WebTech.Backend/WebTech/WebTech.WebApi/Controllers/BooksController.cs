@@ -30,16 +30,16 @@ public class BooksController : BaseController
     [HttpPost("create")]
     [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status401Unauthorized)]
-    public async Task<Result<Book>> Create(CreateOrUpdateBookRequestModel createOrUpdateBookRequestModel)
+    public async Task<Result<Book>> Create(CreateBookRequestModel createBookRequestModel)
     {
         
-        var request = new CreateOrUpdateBookDto
+        var request = new CreateBookDto
         {
-            AuthorFirstName = createOrUpdateBookRequestModel.AuthorFirstName,
-            AuthorLastName = createOrUpdateBookRequestModel.AuthorLastName,
-            PublicationYear = createOrUpdateBookRequestModel.PublicationYear,
-            Title = createOrUpdateBookRequestModel.Title,
-            Genre = createOrUpdateBookRequestModel.Genre
+            AuthorFirstName = createBookRequestModel.AuthorFirstName,
+            AuthorLastName = createBookRequestModel.AuthorLastName,
+            PublicationYear = createBookRequestModel.PublicationYear,
+            Title = createBookRequestModel.Title,
+            Genre = createBookRequestModel.Genre
         };
 
         return await _bookService.CreateAsync(request);
@@ -48,15 +48,13 @@ public class BooksController : BaseController
     [HttpPut("update/{bookId:guid}")]
     [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result<Book>), StatusCodes.Status401Unauthorized)]
-    public async Task<Result<Book>> Update(Guid bookId, CreateOrUpdateBookRequestModel createOrUpdateBookRequestModel)
+    public async Task<Result<Book>> Update(Guid bookId, UpdateBookDto createOrUpdateBookRequestModel)
     {
-        var request = new CreateOrUpdateBookDto
+        var request = new UpdateBookDto
         {
             Title = createOrUpdateBookRequestModel.Title,
             Genre = createOrUpdateBookRequestModel.Genre,
             PublicationYear = createOrUpdateBookRequestModel.PublicationYear,
-            AuthorFirstName = createOrUpdateBookRequestModel.AuthorFirstName,
-            AuthorLastName = createOrUpdateBookRequestModel.AuthorLastName
         };
 
         return await _bookService.UpdateAsync(bookId, request);
