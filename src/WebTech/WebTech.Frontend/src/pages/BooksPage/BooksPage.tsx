@@ -15,7 +15,7 @@ export default function BooksPage() {
     const bookStore = useBooksStore();
     const {fetchBooks} = useFetchBooks(bookStore);
 
-    const bookTableColumns = [
+    const booksTableColumns = [
         {title: 'Id', dataIndex: 'id', key: 'id'},
         {title: 'Title', dataIndex: 'title', key: 'title'},
         {title: 'Genre', dataIndex: 'genre', key: 'genre'},
@@ -51,8 +51,6 @@ export default function BooksPage() {
                 }
             }
         });
-
-
     }
 
     const onEditBook = async (book: IBook) => {
@@ -66,11 +64,10 @@ export default function BooksPage() {
             <CreateBookForm onBookCreated={fetchBooks}/>
             <section className={classes.tableContainer}>
                 <Table
-                    columns={bookTableColumns}
+                    columns={booksTableColumns}
                     dataSource={bookStore.books}
                     rowKey="id"
-                >
-                </Table>
+                />
             </section>
             <Modal
                 title='Edit book'

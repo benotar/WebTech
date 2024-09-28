@@ -10,7 +10,6 @@ interface ICreateBookFormProps {
 
 const CreateBookForm: FC<ICreateBookFormProps> = ({onBookCreated}) => {
 
-
     const [form] = Form.useForm();
 
     const bookStore = useBooksStore();

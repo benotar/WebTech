@@ -30,6 +30,8 @@ export const useAuthorsStore = create<IAuthorsStore>((set) => ({
 
         if(!response.data.isSucceed) {
             set({errorCode: response.data.errorCode});
+
+            throw new Error(`Error creating author: ${response.data.errorCode}`);
         }
 
         set({isLoading: false});

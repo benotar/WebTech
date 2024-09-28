@@ -15,7 +15,7 @@ export default class AuthorsService {
 
     static async update(params: IUpdateAuthor) : Promise<AxiosResponse<IServerResponsePayload<IAuthor>>> {
         return await localNetApi
-            .post<IServerResponsePayload<IAuthor>>(`${ENDPOINTS.AUTHORS.UPDATE(params.authorId)}`, params);
+            .put<IServerResponsePayload<IAuthor>>(`${ENDPOINTS.AUTHORS.UPDATE(params.authorId)}`, params);
     }
 
     static async delete(authorId: string) : Promise<AxiosResponse<IServerResponsePayload<IAuthor>>> {

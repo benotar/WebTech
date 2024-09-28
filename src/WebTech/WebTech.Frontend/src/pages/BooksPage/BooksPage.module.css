@@ -1,10 +1,10 @@
 .booksPageContainer {
-    padding: 20px; /* Відступи з усіх боків */
-    background-color: #f9f9f9; /* Легкий фон для контрасту */
+    padding: 20px;
+    background-color: #f9f9f9;
 }
 
 .tableContainer {
-    margin-top: 20px; /* Відступ зверху для таблиці */
+    margin-top: 20px;
 }
 
 
