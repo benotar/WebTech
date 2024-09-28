@@ -1,5 +1,5 @@
 import {FC, useEffect} from "react";
-import {useAuthStore} from "../../store/store.ts";
+import {useAuthStore} from "../../stores/useAuthStore.ts";
 
 const Logout: FC = () => {
     const {logout} = useAuthStore();

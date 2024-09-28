@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 import classes from './Header.module.css';
-import {useAuthStore} from "../../store/store.ts";
+import {useAuthStore} from "../../stores/useAuthStore.ts";
 
 export default function Header() {
 

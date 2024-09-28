@@ -1,11 +1,13 @@
 import axios, {AxiosInstance} from "axios";
 import {LOCAL_COM_API_URL} from "./endoints.ts";
-import {useAuthStore} from "../store/store.ts";
+import {useAuthStore} from "../stores/useAuthStore.ts";
 import localNetApi from "./localNetApi.ts";
 
 export const localComApi: AxiosInstance = axios.create({
     baseURL: LOCAL_COM_API_URL,
-    withCredentials: false
+    withCredentials: true,
+    headers: {
+        'Content-Type': 'application/json'}
 });
 
 localComApi.interceptors.request.use((request) => {

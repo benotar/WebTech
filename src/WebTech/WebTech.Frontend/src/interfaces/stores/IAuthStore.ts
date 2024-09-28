@@ -1,7 +1,7 @@
 import {ILoginRequest} from "../models/request/ILoginRequest.ts";
 import IUser from "../entities/IUser.ts";
 
-export interface IAuthState {
+export interface IAuthStore {
     isAuthenticated: boolean;
     isLoading: boolean;
     errorCode : string | null;

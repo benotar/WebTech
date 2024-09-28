@@ -1,5 +1,5 @@
 import {FC, useState} from 'react';
-import {useAuthStore} from "../../store/store.ts";
+import {useAuthStore} from "../../stores/useAuthStore.ts";
 
 const LoginForm: FC = () => {
 

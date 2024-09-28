@@ -1,11 +1,11 @@
 import {create} from 'zustand';
 import {persist, createJSONStorage} from 'zustand/middleware'
-import {IAuthState} from "../interfaces/store/IAuthState.ts";
+import {IAuthStore} from "../interfaces/stores/IAuthStore.ts";
 import {ILoginRequest} from "../interfaces/models/request/ILoginRequest.ts";
 import AuthService from "../services/AuthService.ts";
 import UserService from "../services/UserService.ts";
 
-export const useAuthStore = create<IAuthState>()(persist((set) => ({
+export const useAuthStore = create<IAuthStore>()(persist((set) => ({
     isAuthenticated: false,
     isLoading: false,
     errorCode: null,

@@ -1,7 +1,7 @@
 //import classes from './UsersPage.module.css';
 import {useEffect, useState} from "react";
 import IUser from "../../interfaces/entities/IUser.ts";
-import {useAuthStore} from "../../store/store.ts";
+import {useAuthStore} from "../../stores/useAuthStore.ts";
 
 
 export default function UsersPage() {
