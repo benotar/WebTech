@@ -26,7 +26,7 @@ export default function UsersPage() {
 
     return (
         <div className={classes.container}>
-            <h1>User Profile</h1>
+            <h1 className={classes.title}>User Profile</h1>
             {userInfoColumns ? (
                 <Table
                     columns={userInfoColumns}

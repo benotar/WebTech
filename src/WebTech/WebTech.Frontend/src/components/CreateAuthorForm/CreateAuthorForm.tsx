@@ -1,7 +1,7 @@
 import {FC} from "react";
 import {Button, DatePicker, Form, Input, message, Typography} from "antd";
 import {useAuthorsStore} from "../../stores/useAuthorsStore.ts";
-import classes from "../CreateBookForm/CreateBookForm.module.css";
+import classes from './CreateAuthorForm.module.css';
 
 interface ICreateAuthorFormProps {
     onAuthorCreated: () => Promise<void>;
@@ -55,8 +55,23 @@ const CreateAuthorForm: FC<ICreateAuthorFormProps> = ({onAuthorCreated}) => {
                 rules={[
                     {required: true, message: "Please select birth date"},
                     {
-                        validator: (_, value) =>
-                            value ? Promise.resolve() : Promise.reject(new Error('Please select a valid birth date')),
+                        validator: (_, value) => {
+                            if (!value) {
+                                return Promise.reject(new Error('Please select a valid birth date'));
+                            }
+
+                            const today = new Date();
+                            // Зрівнюємо дати до початку дня, інакше можуть бути проблеми з часовими зонами
+                            const selectedDate = new Date(value);
+                            selectedDate.setHours(0, 0, 0, 0);
+                            today.setHours(0, 0, 0, 0);
+
+                            if (selectedDate > today) {
+                                return Promise.reject(new Error('Birth date cannot be in the future'));
+                            }
+
+                            return Promise.resolve();
+                        },
                     },
                 ]}
             >

@@ -1,38 +1,47 @@
-import {Link} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
+import {Layout, Menu} from 'antd';
 import classes from './Header.module.css';
 import {useAuthStore} from "../../stores/useAuthStore.ts";
+import {FC} from "react";
 
+const {Header} = Layout;
 
-export default function MyHeader() {
-
+const MyHeader: FC = () => {
     const {isAuthenticated} = useAuthStore();
+    const location = useLocation();
 
+    const menuItems = isAuthenticated
+        ? [
+            {key: '/authors', label: 'Authors'},
+            {key: '/books', label: 'Books'},
+            {key: '/me', label: 'About me'},
+            {key: '/logout', label: 'Logout'},
+        ]
+        : [
+            {key: '/login', label: 'Login'},
+            {key: '/register', label: 'Register'},
+        ];
 
     return (
-        <header>
-            <nav className={classes.navbar}>
+        <Header>
+            <div className={classes.logo}>
                 <Link to='/' className={classes.navbarLogo}>Web Tech</Link>
+            </div>
+            <Menu
+                className={classes.navbarNav}
+                theme='dark'
+                mode="horizontal"
+                selectedKeys={[location.pathname]}
+            >
 
-                <ul className={classes.navbarNav}>
-
-                    {isAuthenticated ? (
-                        <>
-                            <Link to='/authors' className={classes.navItem}>Authors</Link>
-                            <Link to='/books' className={classes.navItem}>Books</Link>
-                            <Link to='/me' className={classes.navItem}>About me</Link>
-                            <Link to='/logout' className={classes.navItem}>Logout</Link>
-                        </>
-                    ) : (
-                        <>
-                            <Link to='/login' className={classes.navItem}>Login</Link>
-                            <Link to='/register' className={classes.navItem}>Register</Link>
-                        </>
-
-                    )}
-
-
-                </ul>
-            </nav>
-        </header>
+                {menuItems.map(item => (
+                    <Menu.Item key={item.key}>
+                        <Link to={item.key}>{item.label}</Link>
+                    </Menu.Item>
+                ))}
+            </Menu>
+        </Header>
     );
 }
+
+export default MyHeader;

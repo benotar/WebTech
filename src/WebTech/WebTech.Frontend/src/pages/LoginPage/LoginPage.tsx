@@ -1,7 +1,7 @@
 import {FC, useEffect, useState} from 'react';
 import {useAuthStore} from "../../stores/useAuthStore.ts";
 import {v4 as uuidv4} from 'uuid';
-import {Button, Form, Input, Typography} from 'antd';
+import {Button, Form, Input, message, Typography} from 'antd';
 import classes from './LoginPage.module.css';
 import {useNavigate} from "react-router-dom";
 
@@ -23,13 +23,18 @@ const LoginPage: FC = () => {
 
     const handleLogin = async () => {
 
-        await login({
-            userName: userName,
-            password: password,
-            fingerprint: fingerprint
-        });
+        try{
+            await login({
+                userName: userName,
+                password: password,
+                fingerprint: fingerprint
+            });
 
-        navigate('/')
+            navigate('/');
+        }catch (error) {
+            console.log('Error login: ', error);
+            message.error('Incorrect username or password. Please try again.');
+        }
     }
 
     return (

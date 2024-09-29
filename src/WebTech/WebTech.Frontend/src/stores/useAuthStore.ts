@@ -6,6 +6,12 @@ import UserService from "../services/UserService.ts";
 import {IAuthStore} from "../interfaces/stores/IAuthStore.ts";
 import {IRegisterRequest} from "../interfaces/models/request/IRegisterRequest.ts";
 
+
+const handleError = (error: unknown): string => {
+    console.log('Error:', error);
+    return (error as any).response?.data?.message || 'An unexpected error occurred. Please try again later.';
+};
+
 export const useAuthStore = create<IAuthStore>()(persist((set) => ({
     isAuthenticated: false,
     isLoading: false,
@@ -22,32 +28,46 @@ export const useAuthStore = create<IAuthStore>()(persist((set) => ({
         try {
             const response = await AuthService.login(params);
 
+            if (!response.data.isSucceed) {
+                const errorCode = response.data.errorCode;
+
+                throw new Error(typeof errorCode === 'string' ? errorCode : 'Unknown error occurred');
+            }
+
             set({
                 isAuthenticated: response.data.isSucceed,
-                token: response.data.data,
-                errorCode: response.data.errorCode
+                token: response.data.data
             });
 
-            if (response.data.isSucceed) {
+            try {
                 const getUserResponse = await UserService.GetMe();
 
                 set({user: getUserResponse.data.data});
-            }
+            } catch (error) {
+                const errorMessage = handleError(error);
 
+                set({
+                    isAuthenticated: false,
+                    errorCode: errorMessage
+                });
+
+                throw new Error(errorMessage); // Генеруємо виключення з повідомленням про помилку
+            }
 
             return response.data.data;
         } catch (error) {
-            console.error('Login error:', error);
+
+            const errorMessage = handleError(error);
 
             set({
                 isAuthenticated: false,
-                errorCode: 'Login failed'
+                errorCode: errorMessage
             });
 
-            return null;
+            throw new Error(errorMessage);
+
         } finally {
             set({isLoading: false});
-
         }
     },
     register: async (params: IRegisterRequest): Promise<void> => {
@@ -56,13 +76,17 @@ export const useAuthStore = create<IAuthStore>()(persist((set) => ({
         set({isLoading: true});
 
         try {
+            const response = await AuthService.register(params);
 
-            await AuthService.register(params);
+            if (!response.data.isSucceed) {
+                const errorCode = response.data.errorCode;
+
+                throw new Error(typeof errorCode === 'string' ? errorCode : 'Unknown error occurred');
+            }
 
         } catch (error) {
             console.error('Registration error: ', error);
             set({errorCode: 'An error occurred during registration.'});
-
             throw new Error('Registration failed');
         } finally {
             set({isLoading: false});
@@ -73,16 +97,20 @@ export const useAuthStore = create<IAuthStore>()(persist((set) => ({
 
         set({isLoading: true});
 
-        await AuthService.logout();
+        try {
+            await AuthService.logout();
 
-        set({
-            isAuthenticated: false,
-            errorCode: null,
-            token: null,
-            user: null
-        });
-
-        set({isLoading: false});
+            set({
+                isAuthenticated: false,
+                errorCode: null,
+                token: null,
+                user: null
+            });
+        } catch (error) {
+            console.log('Logout error:', error);
+        } finally {
+            set({isLoading: false});
+        }
     },
 
     refresh: async (): Promise<void> => {
@@ -90,15 +118,19 @@ export const useAuthStore = create<IAuthStore>()(persist((set) => ({
 
         set({isLoading: true});
 
-        const response = await AuthService.refresh();
+        try {
+            const response = await AuthService.refresh();
 
-        set({
-            isAuthenticated: response.data.isSucceed,
-            token: response.data.data,
-            errorCode: response.data.errorCode
-        });
-
-        set({isLoading: false});
+            set({
+                isAuthenticated: response.data.isSucceed,
+                token: response.data.data,
+                errorCode: response.data.errorCode
+            });
+        } catch (error) {
+            console.log('Refresh error: ', error);
+        } finally {
+            set({isLoading: false});
+        }
     }
 
 }), {

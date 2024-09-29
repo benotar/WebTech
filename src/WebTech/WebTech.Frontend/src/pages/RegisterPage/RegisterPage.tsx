@@ -28,7 +28,7 @@ const RegisterPage: FC = () => {
 
             console.log('Failed register: ', error);
 
-            message.error('Failed register!');
+            message.error('Failed register!' );
         }
     }
 
@@ -76,16 +76,32 @@ const RegisterPage: FC = () => {
                     label="Birth Date"
                     name="birthDate"
                     rules={[
-                        {required: true, message: "Please select birth date"},
+                        { required: true, message: "Please select birth date" },
                         {
-                            validator: (_, value) =>
-                                value ? Promise.resolve() : Promise.reject(new Error('Please select a valid birth date')),
+                            validator: (_, value) => {
+                                if (!value) {
+                                    return Promise.reject(new Error('Please select a valid birth date'));
+                                }
+
+                                const today = new Date();
+                                // Зрівнюємо дати до початку дня, інакше можуть бути проблеми з часовими зонами
+                                const selectedDate = new Date(value);
+                                selectedDate.setHours(0, 0, 0, 0);
+                                today.setHours(0, 0, 0, 0);
+
+                                if (selectedDate > today) {
+                                    return Promise.reject(new Error('Birth date cannot be in the future'));
+                                }
+
+                                return Promise.resolve();
+                            },
                         },
                     ]}
                 >
                     <DatePicker
                         placeholder="Select birth date"
-                        style={{ width: '100%' }}
+
+                        className={classes.datePicker}
                     />
                 </Form.Item>
 
