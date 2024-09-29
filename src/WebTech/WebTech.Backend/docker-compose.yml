@@ -1,17 +1,16 @@
-version: '3.8'
+version: '3.9'
 
 services:
   postgres:
     container_name: postgres
     build:
-      context: ./Postgres
+      context: Postgres
       dockerfile: Dockerfile
       args:
         - POSTGRES_DB_USERNAME=arg_value
         - POSTGRES_DB_PASSWORD=arg_value
     ports:
       - '5432:5432'
-    image: postgres
     restart: always
     volumes:
       - db_data:/var/lib/postgresql/data
@@ -19,7 +18,7 @@ services:
   redis:
     container_name: redis
     build:
-      context: ./Redis
+      context: Redis
       dockerfile: Dockerfile
     restart: always
     ports:
@@ -28,7 +27,7 @@ services:
   backend:
     container_name: webTech
     build:
-      context: ./WebTech
+      context: WebTech
       dockerfile: Dockerfile
       args:
         - POSTGRES_DB_USERNAME=arg_value
@@ -42,6 +41,17 @@ services:
       - postgres
       - redis
     restart: always
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ../WebTech.Frontend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
 
 volumes:
   db_data:
