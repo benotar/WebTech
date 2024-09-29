@@ -1,10 +1,10 @@
 import {FC} from 'react';
 import {useAuthStore} from "../../stores/useAuthStore.ts";
 import {Button, DatePicker, Form, Input, message, Typography} from 'antd';
-import classes from './RegistrationForm.module.css';
+import classes from './RegisterPage.module.css';
 import {useNavigate} from "react-router-dom";
 
-const RegistrationForm: FC = () => {
+const RegisterPage: FC = () => {
 
     const [form] = Form.useForm();
 
@@ -17,13 +17,15 @@ const RegistrationForm: FC = () => {
 
             const values = await form.validateFields();
 
-
             await register(values);
 
             console.log('Received values from form: ', values);
+
             message.success('Registration successful!');
+
             navigate('/');
         }catch(error){
+
             console.log('Failed register: ', error);
 
             message.error('Failed register!');
@@ -105,4 +107,4 @@ const RegistrationForm: FC = () => {
     );
 };
 
-export default RegistrationForm;
+export default RegisterPage;

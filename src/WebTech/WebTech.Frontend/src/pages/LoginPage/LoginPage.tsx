@@ -2,10 +2,10 @@ import {FC, useEffect, useState} from 'react';
 import {useAuthStore} from "../../stores/useAuthStore.ts";
 import {v4 as uuidv4} from 'uuid';
 import {Button, Form, Input, Typography} from 'antd';
-import classes from './LoginForm.module.css';
+import classes from './LoginPage.module.css';
 import {useNavigate} from "react-router-dom";
 
-const LoginForm: FC = () => {
+const LoginPage: FC = () => {
 
 
     const {login} = useAuthStore();
@@ -79,4 +79,4 @@ const LoginForm: FC = () => {
     );
 };
 
-export default LoginForm;
+export default LoginPage;
