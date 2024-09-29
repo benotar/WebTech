@@ -86,9 +86,11 @@ Optional:
 ```bash
 dotnet restore
 ```
-=====================
+
+### Move to persistance project folder and apply migration
 
 ```bash
+cd TZ/src/WebTech/WebTech.Backed/WebTech/WebTech.Peristence
 dotnet ef database update -s ../WebTech.WebApi/WebTech.WebApi.csproj
 ```
 
