@@ -75,17 +75,15 @@ docker-compose up postgres
 
 ### Apply migrations to work with the database
 
+Optional:
+= = = = = = = = = = = =
 Dependencies may need to be restored
 
 ```bash
 cd TZ/src/WebTech/WebTech.Backend/WebTech
-```
-
-Optional:
-=====================
-```bash
 dotnet restore
 ```
+= = = = = = = = = = = =
 
 ### Move to persistance project folder and apply migration
 
