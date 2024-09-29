@@ -82,10 +82,11 @@ cd TZ/src/WebTech/WebTech.Backend/WebTech
 ```
 
 Optional:
+=====================
 ```bash
 dotnet restore
 ```
-
+=====================
 
 ```bash
 dotnet ef database update -s ../WebTech.WebApi/WebTech.WebApi.csproj
