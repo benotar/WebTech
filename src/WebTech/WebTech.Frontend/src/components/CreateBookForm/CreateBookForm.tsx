@@ -77,7 +77,7 @@ const CreateBookForm: FC<ICreateBookFormProps> = ({onBookCreated}) => {
                         min: 1800,
                         max: new Date().getFullYear(),
                         transform: (value) => Number(value),
-                        message: `Year must be between 1800 and ${new Date().getFullYear()}`,
+                        message: `Year must be between 1800 and current year - ${new Date().getFullYear()}`,
                     },
                 ]}
             >

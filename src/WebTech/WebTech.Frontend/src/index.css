@@ -1,12 +1,8 @@
+/* Загальні стилі */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: Consolas, serif;
     transition: 0.3s color;
-}
-
-main {
-    /* width: 65%; */
-    margin: 0 auto;
 }
