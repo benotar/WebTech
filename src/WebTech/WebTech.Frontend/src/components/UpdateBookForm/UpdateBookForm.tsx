@@ -38,10 +38,13 @@ const UpdateBookForm: FC<IUpdateBookFormProps> = ({onBookUpdated, editingBook}) 
 
 
             form.resetFields();
+
             await onBookUpdated();
-            message.success('Book updated successfully!');
+
+            message.success('Book record updated successfully!');
         } catch (error) {
             console.log('Form validation failed: ', error);
+
             message.error('Invalid input data!');
         }
     }

@@ -6,7 +6,6 @@ import {ICreateAuthor} from "../interfaces/models/request/ICreateAuthor.ts";
 import {ENDPOINTS} from "../shared/endoints.ts";
 import {IUpdateAuthor} from "../interfaces/models/request/IUpdateAuthor.ts";
 
-
 export default class AuthorsService {
     static async create(params: ICreateAuthor) : Promise<AxiosResponse<IServerResponsePayload<IAuthor>>> {
         return await localNetApi

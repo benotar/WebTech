@@ -36,10 +36,13 @@ const UpdateAuthorForm: FC<IUpdateAuthorFormProps> = ({onAuthorUpdated, editingA
 
 
             form.resetFields();
+
             await onAuthorUpdated();
-            message.success('Author updated successfully!');
+
+            message.success('Author record updated successfully!');
         } catch (error) {
             console.log('Form validation failed: ', error);
+
             message.error('Invalid input data!');
         }
     }
@@ -77,10 +80,6 @@ const UpdateAuthorForm: FC<IUpdateAuthorFormProps> = ({onAuthorUpdated, editingA
                     type: "date",
                     message: "Please select birth date" }]}
             >
-                {/*<DatePicker*/}
-                {/*    placeholder="Select birth date"*/}
-                {/*    style={{ width: '100%' }}*/}
-                {/*/>*/}
                 <Input/>
 
             </Form.Item>

@@ -6,7 +6,6 @@ import {ICreateBook} from "../interfaces/models/request/ICreateBook.ts";
 import {IUpdateBook} from "../interfaces/models/request/IUpdateBook.ts";
 import IBook from "../interfaces/entities/IBook.ts";
 
-
 export default class BooksService {
     static async create(params: ICreateBook) : Promise<AxiosResponse<IServerResponsePayload<IBook>>> {
         return await localNetApi

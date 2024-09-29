@@ -20,8 +20,13 @@ const CreateBookForm: FC<ICreateBookFormProps> = ({onBookCreated}) => {
             const values = await form.validateFields();
 
             await bookStore.createBook(values);
+
             form.resetFields();
+
             await onBookCreated();
+
+            message.success('Book record created successfully!');
+
         } catch (error) {
             console.log('Form validation failed: ', error);
             message.error('Invalid input data!');

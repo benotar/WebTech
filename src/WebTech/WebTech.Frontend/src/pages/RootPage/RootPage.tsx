@@ -1,9 +1,9 @@
 import MyHeader from "../../components/Header/MyHeader.tsx";
 import {Outlet} from "react-router-dom";
+import {FC} from "react";
 
 
-
-export default function RootPage() {
+const RootPage: FC = () => {
     return (
         <>
             <MyHeader/>
@@ -11,3 +11,5 @@ export default function RootPage() {
         </>
     );
 }
+
+export default RootPage;

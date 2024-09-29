@@ -30,6 +30,8 @@ const LoginPage: FC = () => {
                 fingerprint: fingerprint
             });
 
+            message.success('Login successful! Welcome back.');
+
             navigate('/');
         }catch (error) {
             console.log('Error login: ', error);

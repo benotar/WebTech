@@ -1,5 +1,5 @@
 import classes from './AuthorsPage.module.css';
-import {useState} from "react";
+import {FC, useState} from "react";
 import {useAuthorsStore} from "../../stores/useAuthorsStore.ts";
 import IAuthor from "../../interfaces/entities/IAuthor.ts";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
@@ -8,8 +8,7 @@ import CreateAuthorForm from "../../components/CreateAuthorForm/CreateAuthorForm
 import useFetchAuthors from "../../hooks/useFetchAuthors.ts";
 import UpdateAuthorForm from "../../components/UpdateAuthorForm/UpdateAuthorForm.tsx";
 
-export default function AuthorsPage() {
-
+const AuthorsPage: FC = () => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [editingAuthor, setEditingAuthor] = useState<IAuthor | null>(null);
     const authorsStore = useAuthorsStore();
@@ -34,7 +33,7 @@ export default function AuthorsPage() {
         },
     ];
 
-    const onDeleteAuthor = async (authorId: string) => {
+    const onDeleteAuthor = async (authorId: string): Promise<void> => {
         Modal.confirm({
             title: 'Are you sure, you want to delete this author record?',
             okText: 'Yes',
@@ -43,15 +42,16 @@ export default function AuthorsPage() {
                 try {
                     await authorsStore.deleteAuthor(authorId);
                     await fetchAuthors();
+                    message.success('Author record deleted successfully!');
                 } catch (error) {
                     console.error('Failed to delete author:', error);
-                    message.error('Failed to delete author. Please try again later.');
+                    message.error('Failed to delete author record. Please try again later.');
                 }
             }
         });
     }
 
-    const onEditAuthor = async (author: IAuthor) => {
+    const onEditAuthor = async (author: IAuthor): Promise<void> => {
         setIsEditing(true);
         setEditingAuthor({...author});
     }
@@ -87,3 +87,5 @@ export default function AuthorsPage() {
         </div>
     );
 }
+
+export default AuthorsPage;

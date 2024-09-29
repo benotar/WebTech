@@ -6,7 +6,6 @@ import {ILoginRequest} from "../interfaces/models/request/ILoginRequest.ts";
 import IUser from "../interfaces/entities/IUser.ts";
 import {IRegisterRequest} from "../interfaces/models/request/IRegisterRequest.ts";
 
-
 export default class AuthService {
 
     static async login(params: ILoginRequest): Promise<AxiosResponse<IServerResponsePayload<string>>> {

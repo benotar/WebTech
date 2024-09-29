@@ -1,15 +1,14 @@
 import classes from './BooksPage.module.css';
 import {Table, Modal, message} from 'antd';
 import {useBooksStore} from "../../stores/useBooksStore.ts";
-import {useState} from "react";
+import {FC, useState} from "react";
 import CreateBookForm from "../../components/CreateBookForm/CreateBookForm.tsx";
 import IBook from "../../interfaces/entities/IBook.ts";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import UpdateBookForm from "../../components/UpdateBookForm/UpdateBookForm.tsx";
 import useFetchBooks from "../../hooks/useFetchBooks.ts";
 
-export default function BooksPage() {
-
+const BooksPage: FC = () => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [editingBook, setEditingBook] = useState<IBook | null>(null);
     const bookStore = useBooksStore();
@@ -45,9 +44,10 @@ export default function BooksPage() {
                 try {
                     await bookStore.deleteBook(bookId);
                     await fetchBooks();
+                    message.success('Book record deleted successfully!');
                 } catch (error) {
                     console.error('Failed to delete book:', error);
-                    message.error('Failed to delete book. Please try again later.');
+                    message.error('Failed to delete book record. Please try again later.');
                 }
             }
         });
@@ -89,3 +89,5 @@ export default function BooksPage() {
         </div>
     );
 }
+
+export default BooksPage;

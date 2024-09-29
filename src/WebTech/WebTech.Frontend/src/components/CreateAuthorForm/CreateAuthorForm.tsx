@@ -17,8 +17,13 @@ const CreateAuthorForm: FC<ICreateAuthorFormProps> = ({onAuthorCreated}) => {
             const values = await form.validateFields();
 
             await authorStore.createAuthor(values);
+
             form.resetFields();
+
             await onAuthorCreated();
+
+            message.success('Author record created successfully!');
+
         } catch (error) {
             console.log('Form validation failed: ', error);
             message.error('Invalid input data!');
@@ -61,7 +66,6 @@ const CreateAuthorForm: FC<ICreateAuthorFormProps> = ({onAuthorCreated}) => {
                             }
 
                             const today = new Date();
-                            // Зрівнюємо дати до початку дня, інакше можуть бути проблеми з часовими зонами
                             const selectedDate = new Date(value);
                             selectedDate.setHours(0, 0, 0, 0);
                             today.setHours(0, 0, 0, 0);
@@ -77,7 +81,7 @@ const CreateAuthorForm: FC<ICreateAuthorFormProps> = ({onAuthorCreated}) => {
             >
                 <DatePicker
                     placeholder="Select birth date"
-                    style={{ width: '100%' }}
+                    className={classes.datePicker}
                 />
             </Form.Item>
             <Button type='primary' htmlType='submit' onClick={onCreateAuthor}>
