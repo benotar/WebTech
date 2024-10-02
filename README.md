@@ -21,7 +21,7 @@ The backend provides a set of RESTful API endpoints, while the frontend consumes
 To run this project locally, you need to have the following installed:
 
 - [Docker](https://www.docker.com/products/docker-desktop/)
-- [.NET SKD](https://dotnet.microsoft.com/en-us/download/)
+- [.NET SDK](https://dotnet.microsoft.com/en-us/download/)
 
 ## Getting Started
 
