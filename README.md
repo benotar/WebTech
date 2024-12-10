@@ -53,11 +53,14 @@ To test the web application with custom domains on your local machine, modify th
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/benotar/TZ.git
-cd TZ/src/WebTech/WebTech.Backend
+git clone https://github.com/benotar/WebTech.git
 ```
 
 ### Set JWT Token Secret
+
+```bash
+cd WebTech\build
+```
 
 Check the contents of the buildhind.txt file. Copy the JWT token key and use it for the build process. Here's an example key you can use for testing:
 
@@ -83,11 +86,11 @@ docker-compose up postgres
 
 ### Restore Backend Dependencies
 
-Navigate to the Web API project and restore the required dependencies:
+Navigate to the Web API solution and restore the required dependencies:
 
 ```bash
-cd TZ\src\WebTech\WebTech.Backend\WebTech\WebTech.WebApi
-dotnet restore
+cd ..\src\WebTech.Backend\WebTech
+dotnet restore WebTech.sln
 ```
 
 ### Apply Database Migrations
@@ -95,8 +98,8 @@ dotnet restore
 Move to the persistence project folder and apply the migrations:
 
 ```bash
-cd TZ/src/WebTech/WebTech.Backend/WebTech/WebTech.Peristence
-dotnet ef database update -s ../WebTech.WebApi/WebTech.WebApi.csproj
+cd .\WebTech.Persistence
+dotnet ef database update -s ..\WebTech.WebApi\WebTech.WebApi.csproj
 ```
 
 ### Shut Down PostgreSQL and Run the Full Project
@@ -104,7 +107,7 @@ dotnet ef database update -s ../WebTech.WebApi/WebTech.WebApi.csproj
 After successfully applying the migrations, stop the PostgreSQL container and run the entire project:
 
 ```bash
-cd TZ/src/WebTech/WebTech.Backend
+cd ..\..\..\..\build
 docker-compose down
 docker-compose up
 ```
@@ -112,4 +115,4 @@ docker-compose up
 ### Go to [local web-page](http://bg-local.com:3000/) and test
 
 ## Contact
-If you have any questions, create issue, or contact me using [Instagram](https://www.instagram.com/benotar_) or Telegram (@benotaar).
+If you have any questions, create issue, or contact me using [Instagram](https://www.instagram.com/benotar_) or [Telegram](https://t.me/benotaar).
