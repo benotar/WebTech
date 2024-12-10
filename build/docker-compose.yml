@@ -4,7 +4,7 @@ services:
   postgres:
     container_name: postgres
     build:
-      context: Postgres
+      context: ../src/WebTech.Backend/Postgres
       dockerfile: Dockerfile
       args:
         - POSTGRES_DB_USERNAME=arg_value
@@ -18,7 +18,7 @@ services:
   redis:
     container_name: redis
     build:
-      context: Redis
+      context: ../src/WebTech.Backend/Redis
       dockerfile: Dockerfile
     restart: always
     ports:
@@ -27,7 +27,7 @@ services:
   backend:
     container_name: webTech
     build:
-      context: WebTech
+      context: ../src/WebTech.Backend/WebTech
       dockerfile: Dockerfile
       args:
         - POSTGRES_DB_USERNAME=arg_value
@@ -45,7 +45,7 @@ services:
   frontend:
     container_name: frontend
     build:
-      context: ../WebTech.Frontend
+      context: ../src/WebTech.Frontend
       dockerfile: Dockerfile
     restart: always
     ports:
